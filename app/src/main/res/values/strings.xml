@@ -14,4 +14,28 @@
   <string name="contentDescription_more">More</string>
   <string name="contentDescription_notification_icon">Icone de notification</string>
   <string name="error_title">Title not valid</string>
+
+  //Login Screen
+  <string name="tittle_login_screen">Sign in</string>
+  <string name="button_login_connect">Sign in with email</string>
+  <string name="email">Email</string>
+  <string name="Button_next">Next</string>
+  <string name="password">Password</string>
+  <string name="welcome_back_message">Welcome back! You\'ve already used %1$s to sign in.Enter</string>
+  <string name="error_check_mail">Error verifying email</string>
+
+  //Register Screen
+  <string name="name">First name and Surname</string>
+  <string name="passwordField">New password</string>
+  <string name="save">Save</string>
+  <string name="error_invalid_email">Incorrect email address</string>
+  <string name="error_empty_email">Enter your email address to continue</string>
+  <string name="error_empty_name">Please enter a first name and surname</string>
+  <string name="error_short_password"> Password is not strong enough.Use at least 6 characters and a mix of letters and numbers</string>
+  <string name="error_create_account">Email account registration unsuccessful</string>
+  <string name="create_user_success">Registered user account</string>
+
+  //LoginPasswordScreen
+  <string name="incorrect_password">Incorrect password</string>
+
 </resources>

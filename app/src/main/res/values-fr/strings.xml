@@ -1,17 +1,40 @@
 <resources>
-  <string name="app_name">Hexagonal Games</string>
-  <string name="action_settings">Paramètres</string>
-  <string name="homefeed_fragment_label">Home</string>
-  <string name="add_fragment_label">Ajout d\'une publication</string>
-  <string name="by">Par %1$s %2$s</string>
-  <string name="notification_enable">Activer les notifications</string>
-  <string name="notification_disable">Désactiver les notifications</string>
-  <string name="description_button_add">Ajout</string>
-  <string name="hint_title">Titre</string>
-  <string name="hint_description">Description</string>
-  <string name="action_save">Sauvegarder</string>
-  <string name="contentDescription_go_back">Retour</string>
-  <string name="contentDescription_more">Plus</string>
-  <string name="contentDescription_notification_icon">Notification icon</string>
-  <string name="error_title">Titre non valide</string>
+    <string name="app_name">Hexagonal Games</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="homefeed_fragment_label">Home</string>
+    <string name="add_fragment_label">Ajout d\'une publication</string>
+    <string name="by">Par %1$s %2$s</string>
+    <string name="notification_enable">Activer les notifications</string>
+    <string name="notification_disable">Désactiver les notifications</string>
+    <string name="description_button_add">Ajout</string>
+    <string name="hint_title">Titre</string>
+    <string name="hint_description">Description</string>
+    <string name="action_save">Sauvegarder</string>
+    <string name="contentDescription_go_back">Retour</string>
+    <string name="contentDescription_more">Plus</string>
+    <string name="contentDescription_notification_icon">Notification icon</string>
+    <string name="error_title">Titre non valide</string>
+
+    //Login Screen and loginEnteredScreen
+    <string name="tittle_login_screen">Se connecter</string>
+    <string name="button_login_connect">Se connecter avec une adresse e-mail</string>
+    <string name="email">E-mail</string>
+    <string name="Button_next">Suivant</string>
+    <string name="password">Mot de passe</string>
+    <string name="welcome_back_message">Bienvenue! Vous avez déjà utilisé l\'adresse e-mail %1$s pour vous connecter. Saisissez le mot de passe du compte.</string>
+    <string name="error_check_mail">Erreur lors de la vérificaton de l\'E-mail</string>
+
+    //Register Screen
+    <string name="name">Nom et Prénom</string>
+    <string name="passwordField">Nouveau mot de passe</string>
+    <string name="save">Enregistrer</string>
+    <string name="error_invalid_email">Cette adresse e-mail n\'est pas valide</string>
+    <string name="error_empty_email">Saisissez votre adresse e-mail pour continuer</string>
+    <string name="error_empty_name">Veuillez saisir un prénom et un nom</string>
+    <string name="error_short_password">Le mot de passe n\'est pas assez sécurisé. Utilisez au moins 6 caractères et une combinaison de chiffres et de lettres.</string>
+    <string name="error_create_account">Échec de la création du compte avec une adresse e-mail</string>
+    <string name="create_user_success">Compte utilisateur enregistré</string>
+
+    //LoginPasswordScreen
+    <string name="incorrect_password">Mot de passe incorrect</string>
 </resources>

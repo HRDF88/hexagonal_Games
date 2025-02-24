@@ -11,4 +11,12 @@ sealed class Screen(
   data object AddPost : Screen("addPost")
   
   data object Settings : Screen("settings")
+
+  data object Login : Screen("login")
+
+  data object LoginEntered : Screen("loginEntered")
+
+  data object  LoginPassword : Screen("loginPassword")
+
+  data object RegisterUser : Screen("registerUser")
 }

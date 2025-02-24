@@ -11,6 +11,10 @@ import androidx.navigation.compose.rememberNavController
 import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.screen.ad.AddScreen
 import com.openclassrooms.hexagonal.games.screen.homefeed.HomefeedScreen
+import com.openclassrooms.hexagonal.games.screen.login.LoginEnteredScreen
+import com.openclassrooms.hexagonal.games.screen.login.LoginPasswordScreen
+import com.openclassrooms.hexagonal.games.screen.login.LoginScreen
+import com.openclassrooms.hexagonal.games.screen.login.RegisterUserScreen
 import com.openclassrooms.hexagonal.games.screen.settings.SettingsScreen
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,7 +44,7 @@ class MainActivity : ComponentActivity() {
 fun HexagonalGamesNavHost(navHostController: NavHostController) {
   NavHost(
     navController = navHostController,
-    startDestination = Screen.Homefeed.route
+    startDestination = Screen.Login.route
   ) {
     composable(route = Screen.Homefeed.route) {
       HomefeedScreen(
@@ -66,5 +70,27 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
         onBackClick = { navHostController.navigateUp() }
       )
     }
+    composable(route = Screen.Login.route){
+      LoginScreen(navHostController = navHostController)
+    }
+    composable(route=Screen.LoginEntered.route){
+      LoginEnteredScreen(navController = navHostController)
+    }
+    composable(route=Screen.LoginPassword.route){
+      LoginPasswordScreen(
+        email = "",
+        onLoginSuccess = {}
+      )
+    }
+    composable(route = Screen.LoginPassword.route + "/{email}") { backStackEntry ->
+      val email = backStackEntry.arguments?.getString("email") ?: ""
+      LoginPasswordScreen(email = email, onLoginSuccess = {})
+    }
+
+    composable(route = Screen.RegisterUser.route + "/{email}") { backStackEntry ->
+      val email = backStackEntry.arguments?.getString("email") ?: ""
+      RegisterUserScreen(email = email,navController = navHostController)
+    }
+
   }
 }
