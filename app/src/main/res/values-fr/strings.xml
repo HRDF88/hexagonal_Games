@@ -14,6 +14,8 @@
     <string name="contentDescription_more">Plus</string>
     <string name="contentDescription_notification_icon">Notification icon</string>
     <string name="error_title">Titre non valide</string>
+    <string name="no_network">Pas de réseau</string>
+    <string name="error_generic">Une erreur est survenue</string>
 
     //Login Screen and loginEnteredScreen
     <string name="tittle_login_screen">Se connecter</string>

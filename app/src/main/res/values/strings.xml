@@ -24,6 +24,8 @@
   <string name="welcome_back_message">Welcome back! You\'ve already used %1$s to sign in.Enter</string>
   <string name="welcome_back">Welcome back You\'ve already used %1$s to sign in. Enter</string>
   <string name="error_check_mail">Error verifying email</string>
+  <string name="no_network">No network</string>
+  <string name="error_generic">An issue occurred</string>
 
   //Register Screen
   <string name="tittle_create_user">Account creation</string>

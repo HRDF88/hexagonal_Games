@@ -91,27 +91,17 @@ fun LoginEnteredScreen(
                 try {
                     // Utiliser la fonction suspendue pour vérifier si l'email existe
                     val emailExists = viewModel.checkIfEmailExists(email.text)
-                    Log.d("LoginScreen", "Email exists: $emailExists")
 
                     // Gestion de la navigation en fonction de l'existence de l'email
                     if (emailExists) {
                         // Si l'email existe, naviguer vers LoginPasswordScreen
-                        Log.d(
-                            "LoginScreen",
-                            "Navigating to LoginPasswordScreen with email: ${email.text}"
-                        )
                         navController.navigate(Screen.LoginPassword.route + "/${email.text}")
                     } else {
                         // Si l'email n'existe pas, naviguer vers RegisterUserScreen
-                        Log.d(
-                            "LoginScreen",
-                            "Navigating to RegisterUserScreen with email: ${email.text}"
-                        )
                         navController.navigate(Screen.RegisterUser.route + "/${email.text}")
                     }
                 } catch (e: Exception) {
                     // Si une exception est levée, afficher un message d'erreur
-                    Log.e("LoginScreen", "Error during email check: ${e.message}")
                     Toast.makeText(
                         context,
                         "Erreur lors de la vérification de l'email",

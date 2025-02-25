@@ -44,7 +44,6 @@ import com.openclassrooms.hexagonal.games.screen.Screen
 @Composable
 fun LoginPasswordScreen(
     email: String,
-    onLoginSuccess: () -> Unit, // Callback en cas de succès
     viewModel: LoginEnteredViewModel = hiltViewModel(),
     navController: NavController,
 
@@ -121,7 +120,6 @@ fun LoginPasswordScreen(
 
                 is LoginState.Success -> {
                     LaunchedEffect(Unit) {
-                        Log.d("LoginScreen", "Connexion réussie, navigation vers Homefeed")
                     }
                 }
 
@@ -143,14 +141,11 @@ fun LoginPasswordScreen(
                     // Vérification du résultat
                     result.onSuccess {
                         // Si le résultat est un succès, on peut naviguer
-                        Log.d("LoginScreen", "Connexion réussie, navigation vers Homefeed")
                         navController.navigate(Screen.Homefeed.route)
                     }.onFailure { error ->
-                        // Si une erreur se produit, affiche l'erreur
                         Log.e("LoginScreen", "Erreur lors de la connexion: ${error.message}")
-                        // Optionnellement, tu peux ajouter un état d'erreur dans loginState si nécessaire
-                    }
 
+                    }
                     // Réinitialiser triggerSignIn après l'appel pour éviter plusieurs exécutions
                     triggerSignIn = false
                 }
@@ -165,7 +160,6 @@ fun LoginPassWordScreenPreview() {
     val navHostController = rememberNavController()
     LoginPasswordScreen(
         email = "jocelyn.testing@gmail.com",
-        onLoginSuccess = { },
         navController = navHostController
     )
 }

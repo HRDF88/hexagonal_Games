@@ -68,13 +68,13 @@ class LoginEnteredViewModel : ViewModel() {
                 true // Email trouvé
             }
         } catch (e: IOException) {
-            Log.e("Firestore", "Erreur de connexion réseau", e)
             _loginState.value = LoginState.Idle
-            throw IOException("Erreur de connexion réseau : ${e.message}") // Relance l'exception
+            _loginState.value = LoginState.Error(R.string.no_network)
+            false
         } catch (e: Exception) {
-            Log.e("Firestore", "Erreur Firestore", e)
             _loginState.value = LoginState.Idle
-            false // En cas d'autre erreur, on considère l'email comme non trouvé
+            _loginState.value = LoginState.Error(R.string.error_generic)
+            false
         }
     }
 
@@ -93,6 +93,10 @@ class LoginEnteredViewModel : ViewModel() {
         } catch (e: Exception) {
             _loginState.value = LoginState.Error(R.string.incorrect_password)
             _loginState.value = LoginState.Idle
+            Result.failure(e)
+        } catch (e: IOException) {
+            _loginState.value = LoginState.Idle
+            _loginState.value = LoginState.Error(R.string.no_network)
             Result.failure(e)
         }
     }
@@ -113,7 +117,6 @@ class LoginEnteredViewModel : ViewModel() {
             val userData = hashMapOf(
                 "email" to email,
                 "nom&prenom" to fullName,
-                "password" to password,  // Ajoute le mot de passe ici si nécessaire (en général, mieux d'éviter de stocker un mot de passe en clair)
                 "createdAt" to System.currentTimeMillis()  // Timestamp pour savoir quand l'utilisateur a été créé
             )
 
@@ -127,11 +130,13 @@ class LoginEnteredViewModel : ViewModel() {
             _loginState.value = LoginState.Idle
             Result.success(Unit) // Succès
         } catch (e: IOException) {
+            _loginState.value = LoginState.Error(R.string.no_network)
             _loginState.value = LoginState.Idle
-            Result.failure(Exception("Erreur réseau, vérifiez votre connexion 🛜❌", e))
+            Result.failure(e)
         } catch (e: Exception) {
+            _loginState.value = LoginState.Error(R.string.error_create_account)
             _loginState.value = LoginState.Idle
-            Result.failure(e) // Gestion des autres erreurs Firebase
+            Result.failure(e)
         }
     }
 }

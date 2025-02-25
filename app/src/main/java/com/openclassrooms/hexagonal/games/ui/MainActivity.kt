@@ -80,13 +80,12 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
     composable(route=Screen.LoginPassword.route){
       LoginPasswordScreen(
         email = "",
-        onLoginSuccess = {},
         navController = navHostController
       )
     }
     composable(route = Screen.LoginPassword.route + "/{email}") { backStackEntry ->
       val email = backStackEntry.arguments?.getString("email") ?: ""
-      LoginPasswordScreen(email = email, onLoginSuccess = {},navController = navHostController)
+      LoginPasswordScreen(email = email, navController = navHostController)
     }
 
     composable(route = Screen.RegisterUser.route + "/{email}") { backStackEntry ->
