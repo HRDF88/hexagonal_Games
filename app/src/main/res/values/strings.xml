@@ -22,9 +22,11 @@
   <string name="Button_next">Next</string>
   <string name="password">Password</string>
   <string name="welcome_back_message">Welcome back! You\'ve already used %1$s to sign in.Enter</string>
+  <string name="welcome_back">Welcome back You\'ve already used %1$s to sign in. Enter</string>
   <string name="error_check_mail">Error verifying email</string>
 
   //Register Screen
+  <string name="tittle_create_user">Account creation</string>
   <string name="name">First name and Surname</string>
   <string name="passwordField">New password</string>
   <string name="save">Save</string>
@@ -37,5 +39,13 @@
 
   //LoginPasswordScreen
   <string name="incorrect_password">Incorrect password</string>
+  <string name="signIn">Sign in</string>
+  <string name="error_not_authenticated">User is not logged in</string>
+  <string name="email_not_verified">Email is not verified</string>
+  <string name="trouble_sign_in">Trouble signing in?</string>
 
+  //FindPasswordScreen
+  <string name="instruction_find_password">Receive instructions to this email that explain how to reset your password.</string>
+  <string name="tittle_find_password">Recover password</string>
+  <string name="send">Send</string>
 </resources>

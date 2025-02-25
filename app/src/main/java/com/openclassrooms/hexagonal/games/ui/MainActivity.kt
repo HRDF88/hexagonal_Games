@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.screen.ad.AddScreen
 import com.openclassrooms.hexagonal.games.screen.homefeed.HomefeedScreen
+import com.openclassrooms.hexagonal.games.screen.login.FindPasswordScreen
 import com.openclassrooms.hexagonal.games.screen.login.LoginEnteredScreen
 import com.openclassrooms.hexagonal.games.screen.login.LoginPasswordScreen
 import com.openclassrooms.hexagonal.games.screen.login.LoginScreen
@@ -79,17 +80,22 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
     composable(route=Screen.LoginPassword.route){
       LoginPasswordScreen(
         email = "",
-        onLoginSuccess = {}
+        onLoginSuccess = {},
+        navController = navHostController
       )
     }
     composable(route = Screen.LoginPassword.route + "/{email}") { backStackEntry ->
       val email = backStackEntry.arguments?.getString("email") ?: ""
-      LoginPasswordScreen(email = email, onLoginSuccess = {})
+      LoginPasswordScreen(email = email, onLoginSuccess = {},navController = navHostController)
     }
 
     composable(route = Screen.RegisterUser.route + "/{email}") { backStackEntry ->
       val email = backStackEntry.arguments?.getString("email") ?: ""
       RegisterUserScreen(email = email,navController = navHostController)
+    }
+
+    composable(route = Screen.FindPassword.route){
+      FindPasswordScreen(navController = navHostController)
     }
 
   }

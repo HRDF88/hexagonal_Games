@@ -21,10 +21,12 @@
     <string name="email">E-mail</string>
     <string name="Button_next">Suivant</string>
     <string name="password">Mot de passe</string>
-    <string name="welcome_back_message">Bienvenue! Vous avez déjà utilisé l\'adresse e-mail %1$s pour vous connecter. Saisissez le mot de passe du compte.</string>
+    <string name="welcome_back_message">Bienvenue Vous avez déjà utilisé l adresse e-mail %1$s pour vous connecter. Saisissez le mot de passe du compte.</string>
+    <string name="welcome_back">Coucou %1$s </string>
     <string name="error_check_mail">Erreur lors de la vérificaton de l\'E-mail</string>
 
     //Register Screen
+    <string name="tittle_create_user">Création de compte</string>
     <string name="name">Nom et Prénom</string>
     <string name="passwordField">Nouveau mot de passe</string>
     <string name="save">Enregistrer</string>
@@ -37,4 +39,13 @@
 
     //LoginPasswordScreen
     <string name="incorrect_password">Mot de passe incorrect</string>
+    <string name="signIn">Se connecter</string>
+    <string name="error_not_authenticated">L\'utilisateur n\'est pas connecté</string>
+    <string name="email_not_verified">L\'e-mail n\'est pas vérifié</string>
+    <string name="trouble_sign_in">Vous ne parvenez pas à vous connecter?</string>
+
+    //FindPasswordScreen
+    <string name="instruction_find_password">Les instructions relatives à la réinitialisation de votre mot de passe seront envoyées à cette adresse mail.</string>
+    <string name="tittle_find_password">Récupérer votre mot de passe</string>
+    <string name="send">Envoyer</string>
 </resources>

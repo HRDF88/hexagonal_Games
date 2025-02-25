@@ -41,7 +41,7 @@ fun LoginScreen(navHostController: NavHostController) {
         )
         Spacer(modifier = Modifier.height(20.dp))
         Button(
-            onClick ={navHostController.navigate(Screen.LoginEntered.route)}
+            onClick ={navHostController.navigate(Screen.LoginEntered.route)},
         ) {
             Text(text = stringResource(R.string.button_login_connect))
         }
