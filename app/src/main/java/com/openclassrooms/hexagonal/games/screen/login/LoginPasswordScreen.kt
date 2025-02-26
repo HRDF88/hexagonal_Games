@@ -17,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,6 +40,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.screen.Screen
+import com.openclassrooms.hexagonal.games.ui.theme.Purple40
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,7 +55,12 @@ fun LoginPasswordScreen(
     var triggerSignIn by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.tittle_login_screen)) }) }
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.tittle_login_screen)) },
+                colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Purple40)
+            )
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -104,7 +111,7 @@ fun LoginPasswordScreen(
 
             Button(
                 onClick = { triggerSignIn = true },
-                enabled = loginState !is LoginState.Loading
+                enabled = loginState !is LoginState.Loading && password.isNotEmpty()
             ) {
                 Text(
                     text = stringResource(

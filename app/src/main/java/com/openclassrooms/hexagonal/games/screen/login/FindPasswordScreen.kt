@@ -1,19 +1,21 @@
 package com.openclassrooms.hexagonal.games.screen.login
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,6 +26,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.openclassrooms.hexagonal.games.R
+import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.ui.theme.Purple40
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -54,13 +57,16 @@ fun FindPasswordScreen(
     viewModel: LoginEnteredViewModel = hiltViewModel()
 ) {
 
-    var email by remember { mutableStateOf(TextFieldValue("")) }
+    var email by remember { mutableStateOf("") }
     var isEmailError by remember { mutableStateOf(false) }
     var emailErrorMessage by remember { mutableStateOf("") }
     val errorEmptyMail = stringResource(R.string.error_empty_email)
     val errorInvalidMail = stringResource(R.string.error_invalid_email)
     val emailPattern = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$") //Email format
     val loginState by viewModel.loginState.collectAsState()
+    var triggerFindPassword by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+    val successMessage = stringResource(R.string.password_reset_success,email)
 
     Scaffold(modifier = Modifier.background(Purple40),
         topBar = {
@@ -77,7 +83,7 @@ fun FindPasswordScreen(
                 colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Purple40)
             )
         }
-    ) {paddingValues ->
+    ) { paddingValues ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -103,12 +109,12 @@ fun FindPasswordScreen(
                 onValueChange = {
                     email = it
                     when {
-                        email.text.isEmpty() -> {
+                        email.isEmpty() -> {
                             isEmailError = true
                             emailErrorMessage = errorEmptyMail
                         }
 
-                        !email.text.matches(emailPattern) -> {
+                        !email.matches(emailPattern) -> {
                             isEmailError = true
                             emailErrorMessage = errorInvalidMail
                         }
@@ -123,7 +129,7 @@ fun FindPasswordScreen(
                 isError = isEmailError,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.wrapContentSize()
             )
             if (isEmailError) {
                 Text(
@@ -137,8 +143,8 @@ fun FindPasswordScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = {},
-                enabled = !isEmailError && loginState !is LoginState.Loading &&email.text.isNotEmpty()
+                onClick = { triggerFindPassword = true },
+                enabled = !isEmailError && loginState !is LoginState.Loading && email.isNotEmpty()
             ) {
                 Text(
                     stringResource(R.string.send)
@@ -146,9 +152,66 @@ fun FindPasswordScreen(
                 )
             }
 
+            when (loginState) {
+                is LoginState.Loading -> {
+                    CircularProgressIndicator()
+                }
+
+                is LoginState.Success -> {
+                    LaunchedEffect(Unit) {
+                    }
+                }
+
+                is LoginState.Error -> {
+                    // Afficher un message d'erreur en cas de connexion échouée
+                    Text(
+                        text = stringResource((loginState as LoginState.Error).message),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+
+                else -> {}
+            }
+            LaunchedEffect(triggerFindPassword) {
+                if (triggerFindPassword) {
+                    // Appel suspendu à signIn et obtenir le résultat
+                    val result = viewModel.resetPassword(email)
+
+                    // Vérification du résultat
+                    result.onSuccess {
+                        // Si le résultat est un succès, on peut naviguer
+                        showDialog = true
+                    }.onFailure { error ->
+                        Log.e("LoginScreen", "Erreur lors de la connexion: ${error.message}")
+
+                    }
+                    // Réinitialiser triggerSignIn après l'appel pour éviter plusieurs exécutions
+                    triggerFindPassword = false
+                }
+            }
+
+
+            // Boîte de dialogue de confirmation
+            if (showDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDialog = false },
+                    title = { Text(stringResource(R.string.title_success_find_password)) },
+                    text = { Text(successMessage) },
+                    confirmButton = {
+                        Button(onClick = {
+                            showDialog = false
+                            navController.navigate(Screen.LoginEntered.route) // Redirection après fermeture
+                        }) {
+                            Text(stringResource(R.string.ok))
+                        }
+                    }
+                )
+            }
         }
     }
 }
+
+
 
 @Preview
 @Composable

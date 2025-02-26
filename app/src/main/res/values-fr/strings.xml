@@ -50,4 +50,8 @@
     <string name="instruction_find_password">Les instructions relatives à la réinitialisation de votre mot de passe seront envoyées à cette adresse mail.</string>
     <string name="tittle_find_password">Récupérer votre mot de passe</string>
     <string name="send">Envoyer</string>
+    <string name="error_find_password">Une erreur inconnue s\'est produite.</string>
+    <string name="password_reset_success">Suivez les instructions envoyées à l\'adresse %1$s pour récupérer votre mot de passe.</string>
+    <string name="ok">OK</string>
+    <string name="title_success_find_password">Consultez votre boïte de réception</string>
 </resources>

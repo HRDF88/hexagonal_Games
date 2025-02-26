@@ -37,7 +37,7 @@ fun LoginEnteredScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.tittle_login_screen)) },
-                modifier = Modifier.background(Purple40)
+                colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Purple40)
 
             )
         }

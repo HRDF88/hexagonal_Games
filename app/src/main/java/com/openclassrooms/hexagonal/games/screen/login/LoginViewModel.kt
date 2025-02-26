@@ -2,12 +2,14 @@ package com.openclassrooms.hexagonal.games.screen.login
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.openclassrooms.hexagonal.games.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -135,6 +137,23 @@ class LoginEnteredViewModel : ViewModel() {
             Result.failure(e)
         } catch (e: Exception) {
             _loginState.value = LoginState.Error(R.string.error_create_account)
+            _loginState.value = LoginState.Idle
+            Result.failure(e)
+        }
+    }
+
+    suspend fun resetPassword(email: String): Result<Unit> {
+        return try {
+            _loginState.value = LoginState.Loading
+            auth.sendPasswordResetEmail(email).await()
+            _loginState.value = LoginState.Idle
+            Result.success(Unit)
+        } catch (e: Exception) {
+            _loginState.value = LoginState.Error(R.string.error_find_password)
+            _loginState.value = LoginState.Idle
+            Result.failure(e)
+        } catch (e: IOException) {
+            _loginState.value = LoginState.Error(R.string.no_network)
             _loginState.value = LoginState.Idle
             Result.failure(e)
         }

@@ -50,4 +50,8 @@
   <string name="instruction_find_password">Receive instructions to this email that explain how to reset your password.</string>
   <string name="tittle_find_password">Recover password</string>
   <string name="send">Send</string>
+  <string name="error_find_password">An unknown error occurred.</string>
+  <string name="password_reset_success">Follow the instructions sent to %1$s to recover your password.</string>
+  <string name="ok">OK</string>
+  <string name="title_success_find_password">Check your email.</string>
 </resources>
