@@ -21,18 +21,39 @@ import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.ui.theme.Purple40
 
-
+/**
+ * Composable function representing the screen where the user enters their email to either log in or register.
+ *
+ * This screen allows the user to input their email address. Upon submission, it checks if the email is already
+ * registered and navigates the user to the appropriate next screen (login or registration) based on the result.
+ * It also handles loading and error states, and displays a toast message if an error occurs.
+ *
+ * @param navController The [NavController] to manage navigation between screens.
+ * @param viewModel The [LoginEnteredViewModel] responsible for managing the login and user verification logic.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginEnteredScreen(
     navController: NavController,
     viewModel: LoginEnteredViewModel = hiltViewModel()
 ) {
+    // State variables to handle email input, loading, and error states
     var email by remember { mutableStateOf(TextFieldValue("")) }
     val loginState by viewModel.loginState.collectAsState()
     var tryCheckMail by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val errorMessage =
+        (loginState as? LoginState.Error)?.message?.let { stringResource(id = it) } ?: ""
 
+
+    // SideEffect to show toast message if an error occurs
+    SideEffect {
+        if (errorMessage.isNotEmpty()) {
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Scaffold to structure the screen with top bar
     Scaffold(modifier = Modifier.background(Purple40),
         topBar = {
             TopAppBar(
@@ -42,6 +63,7 @@ fun LoginEnteredScreen(
             )
         }
     ) { paddingValues ->
+        // Main content of the screen
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -55,6 +77,7 @@ fun LoginEnteredScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Space and email TextField for user input
             TextField(
                 value = email,
                 onValueChange = { email = it },
@@ -63,6 +86,7 @@ fun LoginEnteredScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Button to trigger email validation and navigation
             Button(
                 onClick = { tryCheckMail = true },
                 enabled = loginState !is LoginState.Loading
@@ -70,6 +94,7 @@ fun LoginEnteredScreen(
             ) {
                 Text(stringResource(R.string.Button_next))
             }
+            // Show loading indicator if login is in progress
             when (loginState) {
                 is LoginState.Loading -> {
                     CircularProgressIndicator()
@@ -77,38 +102,32 @@ fun LoginEnteredScreen(
                 }
 
                 is LoginState.Error -> {
-                    val errorMessage =
-                        stringResource(id = (loginState as LoginState.Error).message)
-                    Log.d("LoginScreen", "Error occurred: $errorMessage")
-                    Text(text = errorMessage, color = Color.Red)
+
                 }
+
 
                 else -> {}
             }
+
         }
+        // Handle email validation and navigation based on email existence
         LaunchedEffect(tryCheckMail) {
             if (tryCheckMail) {
                 try {
-                    // Utiliser la fonction suspendue pour vérifier si l'email existe
+                    // Call the suspend function to check if the email exists
                     val emailExists = viewModel.checkIfEmailExists(email.text)
 
-                    // Gestion de la navigation en fonction de l'existence de l'email
+                    // Navigate based on whether the email exists
                     if (emailExists) {
-                        // Si l'email existe, naviguer vers LoginPasswordScreen
+                        // Navigate to LoginPasswordScreen if the email exists
                         navController.navigate(Screen.LoginPassword.route + "/${email.text}")
                     } else {
-                        // Si l'email n'existe pas, naviguer vers RegisterUserScreen
+                        // Navigate to RegisterUserScreen if the email doesn't exist
                         navController.navigate(Screen.RegisterUser.route + "/${email.text}")
                     }
-                } catch (e: Exception) {
-                    // Si une exception est levée, afficher un message d'erreur
-                    Toast.makeText(
-                        context,
-                        "Erreur lors de la vérification de l'email",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                } catch (_: Exception) {
                 }
-                // Réinitialiser tryCheckMail après l'appel
+
                 tryCheckMail = false
             }
         }
@@ -117,8 +136,9 @@ fun LoginEnteredScreen(
     }
 }
 
-
-// 🎨 **Preview**
+/**
+ * Preview of the LoginEnteredScreen composable for design-time visualization.
+ */
 @Preview(showBackground = true)
 @Composable
 fun PreviewLoginEnteredScreen() {

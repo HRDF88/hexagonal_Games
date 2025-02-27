@@ -23,6 +23,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,28 +46,35 @@ import androidx.navigation.compose.rememberNavController
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.ui.theme.Purple40
-import java.io.IOException
 
+/**
+ * Composable function representing the user registration screen of the app.
+ *
+ * This screen allows the user to create an account by providing their email, name, and password.
+ * The email, name, and password fields are validated before the user can submit the registration form.
+ * If the registration is successful, the user is navigated to the home feed.
+ *
+ * @param viewModel The [LoginEnteredViewModel] used for handling the user registration logic.
+ * @param navController The [NavHostController] used for managing navigation actions.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterUserScreen(
-    email: String,
     viewModel: LoginEnteredViewModel = hiltViewModel(),
     navController: NavHostController
 ) {
     val loginState by viewModel.loginState.collectAsState()
 
     val context = LocalContext.current
-    val errorMessage = if (loginState is LoginState.Error) {
-        stringResource(id = (loginState as LoginState.Error).message)
-    } else {
-        ""
-    }
+    val errorMessage =
+        (loginState as? LoginState.Error)?.message?.let { stringResource(id = it) } ?: ""
     var tryRegister by remember { mutableStateOf(false) }
 
 
-    LaunchedEffect(loginState) {
-        if (loginState is LoginState.Error && errorMessage.isNotEmpty()) {
+
+
+    SideEffect {
+        if (errorMessage.isNotEmpty()) {
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
@@ -94,7 +102,6 @@ fun RegisterUserScreen(
         val errorInvalidMail = stringResource(R.string.error_invalid_email)
         val errorEmptyName = stringResource(R.string.error_empty_name)
         val errorPasswordShort = stringResource(R.string.error_short_password)
-
         val createUserSucess = stringResource(R.string.create_user_success)
 
 
@@ -128,6 +135,7 @@ fun RegisterUserScreen(
                     .padding(paddingValues)
                     .padding(16.dp)
             ) {
+                // Email field
                 TextField(
                     value = email,
                     onValueChange = {
@@ -167,6 +175,7 @@ fun RegisterUserScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
+                // Name field
                 TextField(
                     value = name,
                     onValueChange = {
@@ -188,6 +197,8 @@ fun RegisterUserScreen(
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
+
+                // Password field
                 TextField(
                     value = password,
                     onValueChange = {
@@ -227,8 +238,7 @@ fun RegisterUserScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-
-
+                // Register Button
                 Button(
                     onClick = { tryRegister = true },
                     enabled = !isEmailError && !isNameError && !isPasswordError &&
@@ -240,7 +250,7 @@ fun RegisterUserScreen(
                 }
             }
 
-            // Appel de la méthode createAccount et gestion des résultats
+            // Call the createAccount method and handle the result
             LaunchedEffect(tryRegister) {
                 if (tryRegister) {
                     val result = viewModel.createAccount(
@@ -250,16 +260,10 @@ fun RegisterUserScreen(
                     )
 
                     result.onSuccess {
-                        // Succès - Affichage du Toast et redirection vers la page d'accueil
+                        // On success - show Toast and navigate to the home feed
                         Toast.makeText(context, createUserSucess, Toast.LENGTH_SHORT).show()
-                        navController.navigate(Screen.Homefeed.route) // Navigation vers la page d'accueil
-                    }.onFailure { e ->
-                        // Erreur - Affichage du message d'erreur
-                        val errorMessageRegister = when (e) {
-                            is IOException -> "Problème de connexion réseau 🚨 : ${e.message}"
-                            else -> "Erreur Firebase ❌ : ${e.message}"
-                        }
-                        Toast.makeText(context, errorMessageRegister, Toast.LENGTH_SHORT).show()
+                        navController.navigate(Screen.Homefeed.route) // Navigate to home feed screen
+                    }.onFailure {
                     }
                 }
                 tryRegister = false
@@ -270,10 +274,12 @@ fun RegisterUserScreen(
     }
 }
 
-
+/**
+ * Preview of the RegisterUserScreen composable for design-time visualization.
+ */
 @Preview
 @Composable
 fun RegisterUserScreenPreview() {
     val navHostController = rememberNavController()
-    RegisterUserScreen(email = "", navController = navHostController)
+    RegisterUserScreen(navController = navHostController)
 }

@@ -24,6 +24,15 @@ import androidx.navigation.compose.rememberNavController
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.screen.Screen
 
+/**
+ * Composable function representing the login screen of the app.
+ *
+ * This screen serves as the entry point for the user to either log in or navigate to other screens.
+ * The screen displays the app logo and a login button. When the button is clicked, it navigates
+ * the user to the [LoginEnteredScreen] where they can enter their email.
+ *
+ * @param navHostController The [NavHostController] used for managing navigation actions.
+ */
 @Composable
 fun LoginScreen(navHostController: NavHostController) {
     Column(
@@ -34,12 +43,15 @@ fun LoginScreen(navHostController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center // Centers content vertically
     ) {
+        // App Logo displayed at the top
         Image(
             painter = painterResource(id = R.drawable.logo_hex),
             contentDescription = "App Logo",
             modifier = Modifier.size(200.dp) // Adjust the size as needed
         )
         Spacer(modifier = Modifier.height(20.dp))
+
+        // Login button to navigate to LoginEnteredScreen
         Button(
             onClick ={navHostController.navigate(Screen.LoginEntered.route)},
         ) {
@@ -48,6 +60,9 @@ fun LoginScreen(navHostController: NavHostController) {
     }
 }
 
+/**
+ * Preview of the LoginScreen composable for design-time visualization.
+ */
 @Preview(showBackground = true)
 @Composable
 fun PreviewLoginScreen() {

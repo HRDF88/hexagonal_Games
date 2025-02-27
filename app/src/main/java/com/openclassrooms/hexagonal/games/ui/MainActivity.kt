@@ -90,7 +90,7 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
 
     composable(route = Screen.RegisterUser.route + "/{email}") { backStackEntry ->
       val email = backStackEntry.arguments?.getString("email") ?: ""
-      RegisterUserScreen(email = email,navController = navHostController)
+      RegisterUserScreen(navController = navHostController)
     }
 
     composable(route = Screen.FindPassword.route){

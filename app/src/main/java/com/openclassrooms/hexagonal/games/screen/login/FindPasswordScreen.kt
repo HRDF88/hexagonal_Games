@@ -49,6 +49,16 @@ import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.ui.theme.Purple40
 
+/**
+ * Composable function representing the Find Password screen where users can request a password reset.
+ *
+ * This screen contains a form where users can input their email address. It validates the email format and
+ * handles the logic for initiating a password reset request. If the request is successful, a confirmation
+ * dialog is shown, and the user is navigated back to the login screen.
+ *
+ * @param navController The [NavController] to manage navigation between screens.
+ * @param viewModel The [LoginEnteredViewModel] responsible for managing the authentication logic.
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +67,7 @@ fun FindPasswordScreen(
     viewModel: LoginEnteredViewModel = hiltViewModel()
 ) {
 
+    // State variables to handle user input, errors, and UI updates
     var email by remember { mutableStateOf("") }
     var isEmailError by remember { mutableStateOf(false) }
     var emailErrorMessage by remember { mutableStateOf("") }
@@ -66,8 +77,9 @@ fun FindPasswordScreen(
     val loginState by viewModel.loginState.collectAsState()
     var triggerFindPassword by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
-    val successMessage = stringResource(R.string.password_reset_success,email)
+    val successMessage = stringResource(R.string.password_reset_success, email)
 
+    // Scaffold layout to provide structure and top bar
     Scaffold(modifier = Modifier.background(Purple40),
         topBar = {
             TopAppBar(
@@ -93,6 +105,7 @@ fun FindPasswordScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
+            // Instruction text for the user
             Text(
                 text = String.format(stringResource(R.string.instruction_find_password)),
                 overflow = TextOverflow.Ellipsis,
@@ -104,6 +117,7 @@ fun FindPasswordScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Email TextField input with validation
             TextField(
                 value = email,
                 onValueChange = {
@@ -131,6 +145,7 @@ fun FindPasswordScreen(
                 singleLine = true,
                 modifier = Modifier.wrapContentSize()
             )
+            // Error message for invalid email input
             if (isEmailError) {
                 Text(
                     text = emailErrorMessage,
@@ -142,6 +157,7 @@ fun FindPasswordScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Button to trigger password reset
             Button(
                 onClick = { triggerFindPassword = true },
                 enabled = !isEmailError && loginState !is LoginState.Loading && email.isNotEmpty()
@@ -152,6 +168,7 @@ fun FindPasswordScreen(
                 )
             }
 
+            // Loading or error state display based on loginState
             when (loginState) {
                 is LoginState.Loading -> {
                     CircularProgressIndicator()
@@ -163,7 +180,7 @@ fun FindPasswordScreen(
                 }
 
                 is LoginState.Error -> {
-                    // Afficher un message d'erreur en cas de connexion échouée
+                    // Display error message
                     Text(
                         text = stringResource((loginState as LoginState.Error).message),
                         color = MaterialTheme.colorScheme.error
@@ -172,26 +189,26 @@ fun FindPasswordScreen(
 
                 else -> {}
             }
+            // Handle password reset action when triggered
             LaunchedEffect(triggerFindPassword) {
                 if (triggerFindPassword) {
                     // Appel suspendu à signIn et obtenir le résultat
                     val result = viewModel.resetPassword(email)
 
-                    // Vérification du résultat
                     result.onSuccess {
-                        // Si le résultat est un succès, on peut naviguer
+                        // On success, show the confirmation dialog
                         showDialog = true
                     }.onFailure { error ->
                         Log.e("LoginScreen", "Erreur lors de la connexion: ${error.message}")
 
                     }
-                    // Réinitialiser triggerSignIn après l'appel pour éviter plusieurs exécutions
+                    // Reset trigger after execution
                     triggerFindPassword = false
                 }
             }
 
 
-            // Boîte de dialogue de confirmation
+            // Success dialog after successful password reset
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
@@ -212,7 +229,9 @@ fun FindPasswordScreen(
 }
 
 
-
+/**
+ * Preview of the FindPasswordScreen composable for design-time visualization.
+ */
 @Preview
 @Composable
 fun FindPasswordScreenPreview() {
