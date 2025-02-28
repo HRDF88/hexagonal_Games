@@ -1,7 +1,14 @@
 package com.openclassrooms.hexagonal.games.di
 
+import com.openclassrooms.hexagonal.games.data.repository.UserRepository
+import com.openclassrooms.hexagonal.games.data.repositoryInterface.UserRepositoryInterface
+import com.openclassrooms.hexagonal.games.data.service.CollectionUserFirebaseApi
 import com.openclassrooms.hexagonal.games.data.service.PostApi
 import com.openclassrooms.hexagonal.games.data.service.PostFakeApi
+import com.openclassrooms.hexagonal.games.data.useCase.user.CheckIfEmailExistsUseCase
+import com.openclassrooms.hexagonal.games.data.useCase.user.CreateUserUseCase
+import com.openclassrooms.hexagonal.games.data.useCase.user.DeleteUserUseCase
+import com.openclassrooms.hexagonal.games.data.useCase.user.GetUserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,5 +34,35 @@ class AppModule {
   @Singleton
   fun providePostApi(): PostApi {
     return PostFakeApi()
+  }
+
+  @Provides
+  fun provideUserFirebaseApi(): CollectionUserFirebaseApi {
+    return CollectionUserFirebaseApi()
+  }
+
+  @Provides
+  fun provideUserRepository(api: CollectionUserFirebaseApi): UserRepositoryInterface {
+    return UserRepository(api)
+  }
+
+  @Provides
+  fun provideCreateUserUseCase(userRepository: UserRepositoryInterface): CreateUserUseCase {
+    return CreateUserUseCase(userRepository)
+  }
+
+  @Provides
+  fun provideGetUserUseCase(userRepository: UserRepositoryInterface): GetUserUseCase {
+    return GetUserUseCase(userRepository)
+  }
+
+  @Provides
+  fun provideDeleteUserUseCase(userRepository: UserRepositoryInterface): DeleteUserUseCase {
+    return DeleteUserUseCase(userRepository)
+  }
+
+  @Provides
+  fun provideCheckIfEmailExistsUseCase(userRepository: UserRepositoryInterface) : CheckIfEmailExistsUseCase{
+    return CheckIfEmailExistsUseCase(userRepository)
   }
 }

@@ -14,6 +14,8 @@
   <string name="contentDescription_more">More</string>
   <string name="contentDescription_notification_icon">Icone de notification</string>
   <string name="error_title">Title not valid</string>
+  <string name="action_user_account">User account management</string>
+
 
   //Login Screen
   <string name="tittle_login_screen">Sign in</string>
@@ -54,4 +56,16 @@
   <string name="password_reset_success">Follow the instructions sent to %1$s to recover your password.</string>
   <string name="ok">OK</string>
   <string name="title_success_find_password">Check your email.</string>
+
+  //User Management Screen
+  <string name="tittle_user_management_screen">My account</string>
+  <string name="sign_out">Sign out</string>
+  <string name="delete_account">Delete account</string>
+  <string name="delete_account_confirmation">Deletion confirmation</string>
+  <string name="are_you_sure_delete_account">Are you sure you want to delete your account?</string>
+  <string name="confirm">Confirm</string>
+  <string name="cancel">Cancel</string>
+
+
+
 </resources>

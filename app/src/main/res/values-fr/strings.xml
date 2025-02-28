@@ -16,6 +16,8 @@
     <string name="error_title">Titre non valide</string>
     <string name="no_network">Pas de réseau</string>
     <string name="error_generic">Une erreur est survenue</string>
+    <string name="action_user_account">Gestion du compte utilisateur</string>
+
 
     //Login Screen and loginEnteredScreen
     <string name="tittle_login_screen">Se connecter</string>
@@ -54,4 +56,15 @@
     <string name="password_reset_success">Suivez les instructions envoyées à l\'adresse %1$s pour récupérer votre mot de passe.</string>
     <string name="ok">OK</string>
     <string name="title_success_find_password">Consultez votre boïte de réception</string>
+
+    //User Management Screen
+    <string name="tittle_user_management_screen">Mon compte</string>
+    <string name="sign_out">Déconnexion</string>
+    <string name="delete_account">Suppression du compte</string>
+    <string name="delete_account_confirmation">Confirmation de suppression</string>
+    <string name="are_you_sure_delete_account">Êtes-vous sûr de vouloir supprimer votre compte ?</string>
+    <string name="confirm">Confirmer</string>
+    <string name="cancel">Annuler</string>
+
+
 </resources>

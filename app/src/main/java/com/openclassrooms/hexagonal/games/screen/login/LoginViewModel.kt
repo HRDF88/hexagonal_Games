@@ -2,16 +2,19 @@ package com.openclassrooms.hexagonal.games.screen.login
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseAuthException
 import com.openclassrooms.hexagonal.games.R
+import com.openclassrooms.hexagonal.games.data.service.FirebaseAuthService
+import com.openclassrooms.hexagonal.games.data.useCase.user.CheckIfEmailExistsUseCase
+import com.openclassrooms.hexagonal.games.data.useCase.user.CreateUserUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import javax.inject.Inject
 
 /**
  * Sealed class representing the possible states of the login process.
@@ -55,40 +58,13 @@ sealed class LoginState {
  * account creation, password reset, and email validation. It exposes the current login state
  * as a `StateFlow` and updates it based on various events.
  */
-class LoginEnteredViewModel : ViewModel() {
+@HiltViewModel
+class LoginEnteredViewModel @Inject constructor(
+    private val checkIfEmailExistsUseCase: CheckIfEmailExistsUseCase,
+    private val createUserUseCase: CreateUserUseCase,
+    private val firebaseAuthService: FirebaseAuthService
+) : ViewModel() {
 
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-    /**
-     * Listener to track changes in authentication state.
-     *
-     * This listener listens for changes in the authentication state and updates the login state accordingly.
-     * If the user is authenticated and their email is verified, a successful login state is set.
-     * If the user is not authenticated, an error state is set.
-     */
-    private val authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-
-        val user = firebaseAuth.currentUser
-        if (user != null) {
-            if (user.isEmailVerified) {
-                _loginState.value =
-                    LoginState.Success(true) // Successful login with verified email
-            }
-        } else {
-            // Not authenticated
-            _loginState.value = LoginState.Error(R.string.error_not_authenticated)
-        }
-    }
-
-    // Add authentication state listener
-    init {
-        auth.addAuthStateListener(authStateListener)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        auth.removeAuthStateListener(authStateListener)
-    }
 
     /**
      * Mutable state flow representing the current login state.
@@ -111,15 +87,11 @@ class LoginEnteredViewModel : ViewModel() {
      */
     suspend fun checkIfEmailExists(email: String): Boolean {
         _loginState.value = LoginState.Loading
-        val db = FirebaseFirestore.getInstance()
 
         return try {
-            val documents = db.collection("users")
-                .whereEqualTo("email", email)
-                .get()
-                .await()
+            val result = checkIfEmailExistsUseCase.invoke(email)
 
-            val emailExists = !documents.isEmpty
+            val emailExists = result.getOrDefault(false)
 
             Log.d("Firestore", if (emailExists) "Email déjà utilisé" else "Email disponible")
             _loginState.value = LoginState.Idle
@@ -152,16 +124,24 @@ class LoginEnteredViewModel : ViewModel() {
     suspend fun signIn(email: String, password: String): Result<Unit> {
         _loginState.value = LoginState.Loading
         return try {
-            // Connexion de l'utilisateur avec email et mot de passe
+            val user = firebaseAuthService.signInWithEmailAndPassword(email, password)
 
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).await()
-            _loginState.value = LoginState.Success(true)
-            Result.success(Unit)
-        } catch (e: Exception) {
-            _loginState.value = LoginState.Error(R.string.incorrect_password)
-            Result.failure(e)
+            if (user != null) {
+                // Si l'utilisateur est authentifié, tu peux continuer
+                _loginState.value = LoginState.Success(true)
+                Result.success(Unit)
+            } else {
+                // Si l'utilisateur est null, cela veut dire que la connexion a échoué
+                _loginState.value = LoginState.Error(R.string.incorrect_password)
+                Result.failure(Exception("Mot de passe incorrect"))
+            }
         } catch (e: IOException) {
+            // Gestion des erreurs réseau
             _loginState.value = LoginState.Error(R.string.no_network)
+            Result.failure(e)
+        } catch (e: Exception) {
+            // Capture des autres erreurs
+            _loginState.value = LoginState.Error(R.string.incorrect_password)
             Result.failure(e)
         }
     }
@@ -181,14 +161,13 @@ class LoginEnteredViewModel : ViewModel() {
     suspend fun createAccount(email: String, password: String, fullName: String): Result<Unit> {
         return try {
             _loginState.value = LoginState.Loading
-            // Crée l'utilisateur dans Firebase Authentication
+
             val authResult = withContext(Dispatchers.IO) {
-                auth.createUserWithEmailAndPassword(email, password).await()
+                firebaseAuthService.createUserWithEmailAndPassword(email, password)
             }
 
-            val user = authResult.user ?: return Result.failure(Exception("Utilisateur non trouvé"))
+            val user = authResult ?: return Result.failure(Exception("Utilisateur non trouvé"))
 
-            // Ajoute l'utilisateur à Firestore
             val userData = hashMapOf(
                 "email" to email,
                 "nom&prenom" to fullName,
@@ -196,11 +175,7 @@ class LoginEnteredViewModel : ViewModel() {
             )
 
             withContext(Dispatchers.IO) {
-                FirebaseFirestore.getInstance()
-                    .collection("users")
-                    .document(user.uid) // Utilisation de l'UID de l'utilisateur pour créer un document unique
-                    .set(userData)
-                    .await()
+                createUserUseCase.invoke(user.uid, userData)
             }
             Result.success(Unit) // Succès
         } catch (e: IOException) {
@@ -210,6 +185,11 @@ class LoginEnteredViewModel : ViewModel() {
             Result.failure(e)
         } catch (e: Exception) {
             _loginState.value = LoginState.Error(R.string.error_create_account)
+            delay(2000)
+            _loginState.value = LoginState.Idle
+            Result.failure(e)
+        } catch (e: FirebaseAuthException) {
+            _loginState.value = LoginState.Error(R.string.no_network)
             delay(2000)
             _loginState.value = LoginState.Idle
             Result.failure(e)
@@ -228,20 +208,20 @@ class LoginEnteredViewModel : ViewModel() {
      * @param email The email address of the user requesting a password reset.
      * @return A result indicating success or failure.
      */
-    suspend fun resetPassword(email: String): Result<Unit> {
-        return try {
-            _loginState.value = LoginState.Loading
-            auth.sendPasswordResetEmail(email).await()
-            Result.success(Unit)
-        } catch (e: Exception) {
+    suspend fun resetPassword(email: String) {
+        _loginState.value = LoginState.Loading
+        val result = firebaseAuthService.resetPassword(email)
+
+        result.onSuccess {
+            _loginState.value = LoginState.Success(true)
+        }.onFailure { e ->
+            Log.e("ResetPassword", "Erreur : ${e.message}") // Debugging
             _loginState.value = LoginState.Error(R.string.error_find_password)
-            Result.failure(e)
-        } catch (e: IOException) {
-            _loginState.value = LoginState.Error(R.string.no_network)
-            Result.failure(e)
-        } finally {
-            delay(2000)
-            _loginState.value = LoginState.Idle
         }
+
+        delay(2000)
+        _loginState.value = LoginState.Idle
     }
+
+
 }

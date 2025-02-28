@@ -4,10 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.screen.ad.AddScreen
 import com.openclassrooms.hexagonal.games.screen.homefeed.HomefeedScreen
@@ -17,8 +19,11 @@ import com.openclassrooms.hexagonal.games.screen.login.LoginPasswordScreen
 import com.openclassrooms.hexagonal.games.screen.login.LoginScreen
 import com.openclassrooms.hexagonal.games.screen.login.RegisterUserScreen
 import com.openclassrooms.hexagonal.games.screen.settings.SettingsScreen
+import com.openclassrooms.hexagonal.games.screen.userAccountManagement.UserAccountManagementScreen
+import com.openclassrooms.hexagonal.games.screen.userAccountManagement.UserAccountManagementViewModel
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 /**
  * Main activity for the application. This activity serves as the entry point and container for the navigation
@@ -26,76 +31,85 @@ import dagger.hilt.android.AndroidEntryPoint
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-  
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    
-    setContent {
-      val navController = rememberNavController()
-      
-      HexagonalGamesTheme {
-        HexagonalGamesNavHost(navHostController = navController)
-      }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setContent {
+            val navController = rememberNavController()
+
+            HexagonalGamesTheme {
+                HexagonalGamesNavHost(navHostController = navController)
+            }
+        }
     }
-  }
-  
+
 }
 
 @Composable
 fun HexagonalGamesNavHost(navHostController: NavHostController) {
-  NavHost(
-    navController = navHostController,
-    startDestination = Screen.Login.route
-  ) {
-    composable(route = Screen.Homefeed.route) {
-      HomefeedScreen(
-        onPostClick = {
-          //TODO
-        },
-        onSettingsClick = {
-          navHostController.navigate(Screen.Settings.route)
-        },
-        onFABClick = {
-          navHostController.navigate(Screen.AddPost.route)
+    NavHost(
+        navController = navHostController,
+        startDestination = Screen.Login.route
+    ) {
+        composable(route = Screen.Homefeed.route) {
+            HomefeedScreen(
+                onPostClick = {
+                    //TODO
+                },
+                onSettingsClick = {
+                    navHostController.navigate(Screen.Settings.route)
+                },
+                onFABClick = {
+                    navHostController.navigate(Screen.AddPost.route)
+                },
+                onUserAccountClick = {
+                    navHostController.navigate(Screen.UserAccount.route)
+                }
+            )
         }
-      )
-    }
-    composable(route = Screen.AddPost.route) {
-      AddScreen(
-        onBackClick = { navHostController.navigateUp() },
-        onSaveClick = { navHostController.navigateUp() }
-      )
-    }
-    composable(route = Screen.Settings.route) {
-      SettingsScreen(
-        onBackClick = { navHostController.navigateUp() }
-      )
-    }
-    composable(route = Screen.Login.route){
-      LoginScreen(navHostController = navHostController)
-    }
-    composable(route=Screen.LoginEntered.route){
-      LoginEnteredScreen(navController = navHostController)
-    }
-    composable(route=Screen.LoginPassword.route){
-      LoginPasswordScreen(
-        email = "",
-        navController = navHostController
-      )
-    }
-    composable(route = Screen.LoginPassword.route + "/{email}") { backStackEntry ->
-      val email = backStackEntry.arguments?.getString("email") ?: ""
-      LoginPasswordScreen(email = email, navController = navHostController)
-    }
+        composable(route = Screen.AddPost.route) {
+            AddScreen(
+                onBackClick = { navHostController.navigateUp() },
+                onSaveClick = { navHostController.navigateUp() }
+            )
+        }
+        composable(route = Screen.Settings.route) {
+            SettingsScreen(
+                onBackClick = { navHostController.navigateUp() }
+            )
+        }
+        composable(route = Screen.Login.route) {
+            LoginScreen(navHostController = navHostController)
+        }
+        composable(route = Screen.LoginEntered.route) {
+            LoginEnteredScreen(navController = navHostController)
+        }
+        composable(route = Screen.LoginPassword.route) {
+            LoginPasswordScreen(
+                email = "",
+                navController = navHostController
+            )
+        }
+        composable(route = Screen.LoginPassword.route + "/{email}") { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            LoginPasswordScreen(email = email, navController = navHostController)
+        }
 
-    composable(route = Screen.RegisterUser.route + "/{email}") { backStackEntry ->
-      val email = backStackEntry.arguments?.getString("email") ?: ""
-      RegisterUserScreen(navController = navHostController)
-    }
+        composable(route = Screen.RegisterUser.route + "/{email}") { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            RegisterUserScreen(navController = navHostController)
+        }
 
-    composable(route = Screen.FindPassword.route){
-      FindPasswordScreen(navController = navHostController)
-    }
+        composable(route = Screen.FindPassword.route) {
+            FindPasswordScreen(navController = navHostController)
+        }
+        composable(route = Screen.UserAccount.route) {
+            UserAccountManagementScreen(
+                navController = navHostController
+            )
+        }
 
-  }
+
+    }
 }
