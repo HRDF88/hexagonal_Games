@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.openclassrooms.hexagonal.games.R
+import com.openclassrooms.hexagonal.games.ui.component.PhotoPickerComposable
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -128,7 +129,12 @@ private fun CreatePost(
         label = { Text(stringResource(id = R.string.hint_description)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
       )
+      PhotoPickerComposable()
     }
+
+
+
+
     Button(
       enabled = error == null,
       onClick = { onSaveClicked() }

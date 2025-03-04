@@ -51,11 +51,17 @@ dependencies {
   implementation(libs.google.firebase.analytics)
   implementation(libs.google.firebase.auth)
   implementation(libs.google.firebase.firestore)
+  // Firebase
+  implementation (libs.com.google.firebase.firebase.storage)
+
+  // FirebaseUI for Storage
+  implementation (libs.firebase.ui.storage)
 
 
   //DI
   implementation(libs.hilt)
     implementation(libs.transport.runtime)
+    implementation(libs.firebase.messaging.ktx)
 
     ksp(libs.hilt.compiler)
   implementation(libs.hilt.navigation.compose)

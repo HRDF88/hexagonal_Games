@@ -1,6 +1,7 @@
 package com.openclassrooms.hexagonal.games.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
@@ -10,6 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
+import com.openclassrooms.hexagonal.games.data.service.MyFirebaseMessagingService
 import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.screen.ad.AddScreen
 import com.openclassrooms.hexagonal.games.screen.homefeed.HomefeedScreen
@@ -24,13 +27,18 @@ import com.openclassrooms.hexagonal.games.screen.userAccountManagement.UserAccou
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 /**
  * Main activity for the application. This activity serves as the entry point and container for the navigation
  * fragment. It handles setting up the toolbar, navigation controller, and action bar behavior.
  */
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity :
+    ComponentActivity() {
+
+    @Inject
+    lateinit var myFirebaseMessagingService: MyFirebaseMessagingService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,9 +50,18 @@ class MainActivity : ComponentActivity() {
                 HexagonalGamesNavHost(navHostController = navController)
             }
         }
+        myFirebaseMessagingService.fireBaseMessaging.token
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val token = task.result
+                    Log.d("FCM", "Token récupéré : $token")
+                } else {
+                    Log.e("FCM", "Erreur lors de la récupération du token", task.exception)
+                }
+            }
     }
-
 }
+
 
 @Composable
 fun HexagonalGamesNavHost(navHostController: NavHostController) {

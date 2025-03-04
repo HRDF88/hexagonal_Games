@@ -3,6 +3,8 @@ package com.openclassrooms.hexagonal.games.di
 import com.openclassrooms.hexagonal.games.data.repository.UserRepository
 import com.openclassrooms.hexagonal.games.data.repositoryInterface.UserRepositoryInterface
 import com.openclassrooms.hexagonal.games.data.service.CollectionUserFirebaseApi
+import com.openclassrooms.hexagonal.games.data.service.FirebaseStorageManager
+import com.openclassrooms.hexagonal.games.data.service.MyFirebaseMessagingService
 import com.openclassrooms.hexagonal.games.data.service.PostApi
 import com.openclassrooms.hexagonal.games.data.service.PostFakeApi
 import com.openclassrooms.hexagonal.games.data.useCase.user.CheckIfEmailExistsUseCase
@@ -33,7 +35,7 @@ class AppModule {
   @Provides
   @Singleton
   fun providePostApi(): PostApi {
-    return PostFakeApi()
+    return FirebaseStorageManager()
   }
 
   @Provides
@@ -64,5 +66,10 @@ class AppModule {
   @Provides
   fun provideCheckIfEmailExistsUseCase(userRepository: UserRepositoryInterface) : CheckIfEmailExistsUseCase{
     return CheckIfEmailExistsUseCase(userRepository)
+  }
+
+  @Provides
+  fun provideFirebaseMessagingService(): MyFirebaseMessagingService {
+    return MyFirebaseMessagingService()
   }
 }
