@@ -1,8 +1,11 @@
 package com.openclassrooms.hexagonal.games.screen.ad
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.hexagonal.games.data.repository.PostRepository
+import com.openclassrooms.hexagonal.games.data.service.FirebaseAuthService
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,6 +14,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
@@ -19,7 +23,7 @@ import javax.inject.Inject
  * It utilizes dependency injection to retrieve a PostRepository instance for interacting with post data.
  */
 @HiltViewModel
-class AddViewModel @Inject constructor(private val postRepository: PostRepository) : ViewModel() {
+class AddViewModel @Inject constructor(private val postRepository: PostRepository, private val firebaseAuthService: FirebaseAuthService) : ViewModel() {
   
   /**
    * Internal mutable state flow representing the current post being edited.
@@ -79,15 +83,31 @@ class AddViewModel @Inject constructor(private val postRepository: PostRepositor
    *
    * TODO: Implement logic to retrieve the current user.
    */
-  fun addPost() {
-    //TODO : retrieve the current user
-    postRepository.addPost(
-      _post.value.copy(
-        author = User("1", "Gerry", "Ariella")
+  fun addPost(title: String, description: String?, imageUri: Uri?) {
+    val currentUser = firebaseAuthService.getCurrentUser()
+
+    if (currentUser != null) {
+      val postToSave = _post.value.copy(
+        author = User(id = currentUser.uid, name = currentUser.displayName ?: "Utilisateur inconnu")
       )
-    )
+
+      viewModelScope.launch {
+        postRepository.addPost(
+          title = postToSave.title,
+          description = postToSave.description,
+          imageUri = postToSave.photoUrl?.let { Uri.parse(it) }, // Gérer le cas où `photoUrl` est null
+          authorId = postToSave.author!!.id,
+          onSuccess = { Log.d("PostViewModel", "Post ajouté avec succès") },
+          onFailure = { error -> Log.e("PostViewModel", "Erreur lors de l'ajout du post", error) }
+        )
+      }
+    } else {
+      Log.e("PostViewModel", "Aucun utilisateur connecté")
+    }
   }
-  
+
+
+
   /**
    * Verifies mandatory fields of the post
    * and returns a corresponding FormError if so.

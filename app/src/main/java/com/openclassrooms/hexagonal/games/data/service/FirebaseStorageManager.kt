@@ -6,12 +6,13 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.openclassrooms.hexagonal.games.domain.model.Post
+import com.openclassrooms.hexagonal.games.domain.model.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.UUID
 
-class FirebaseStorageManager : PostApi{
+class FirebaseStorageManager : PostApi {
 
     val storage = FirebaseStorage.getInstance()
     private val storageRef: StorageReference = storage.reference
@@ -22,33 +23,48 @@ class FirebaseStorageManager : PostApi{
 
     override fun getPosts(): Flow<List<Post>> = callbackFlow {
         val listener = postCollection
-            .orderBy("timestamp", Query.Direction.DESCENDING) // Trier du plus récent au plus ancien
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, exception ->
                 if (exception != null) {
-                    close(exception) // Ferme le Flow en cas d'erreur
+                    close(exception)  // Ferme en cas d'erreur
                     return@addSnapshotListener
                 }
 
                 if (snapshot != null) {
                     val posts = snapshot.documents.mapNotNull { document ->
-                        document.toObject(Post::class.java)
+                        val post = document.toObject(Post::class.java)
+
+                        val authorRef = post?.authorRef
+                        if (authorRef != null) {
+                            // Utiliser le mapper pour récupérer l'auteur en arrière-plan
+                            User.fromDocumentReference(authorRef) { author ->
+                                post.author = author  // Mettre à jour l'objet post avec l'auteur
+                            }
+                        }
+
+                        post
                     }
-                    trySend(posts) // Envoie la liste des posts
+
+                    trySend(posts)  // Envoie la liste des posts
                 }
             }
 
-        awaitClose { listener.remove() } // Supprime l'écouteur quand Flow est annulé
+        awaitClose { listener.remove() }  // Ferme l'écouteur quand Flow est annulé
     }
+
 
     override suspend fun addPost(
         title: String,
         description: String?,
         imageUri: Uri?,
-        authorId: String,
+        authorId: String,  // authorId est un String
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
         val postId = UUID.randomUUID().toString() // Générer un ID unique pour le post
+
+        // Récupérer la référence de l'auteur depuis son ID
+        val authorRef = firestore.collection("users").document(authorId)
 
         if (imageUri != null) {
             // Créer un chemin de stockage unique pour l'image
@@ -65,7 +81,7 @@ class FirebaseStorageManager : PostApi{
                             "description" to description,
                             "photoUrl" to uri.toString(),
                             "timestamp" to System.currentTimeMillis(),
-                            "author" to firestore.collection("users").document(authorId) // Référence à l'auteur
+                            "authorRef" to authorRef // Utiliser la référence de l'auteur
                         )
 
                         // Ajouter le post à Firestore
@@ -84,7 +100,7 @@ class FirebaseStorageManager : PostApi{
                 "description" to description,
                 "photoUrl" to null,
                 "timestamp" to System.currentTimeMillis(),
-                "author" to firestore.collection("users").document(authorId)
+                "authorRef" to authorRef // Utiliser la référence de l'auteur
             )
 
             postCollection.document(postId)

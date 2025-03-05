@@ -9,7 +9,7 @@ import kotlinx.coroutines.tasks.await
 class CollectionUserFirebaseApi {
 
     private val firestore = FirebaseFirestore.getInstance()
-    private val usersCollection = firestore.collection("users")
+     val usersCollection = firestore.collection("users")
 
     /**
      * Ajoute ou met à jour un utilisateur dans Firestore

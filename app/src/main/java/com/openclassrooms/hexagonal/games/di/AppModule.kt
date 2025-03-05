@@ -6,7 +6,6 @@ import com.openclassrooms.hexagonal.games.data.service.CollectionUserFirebaseApi
 import com.openclassrooms.hexagonal.games.data.service.FirebaseStorageManager
 import com.openclassrooms.hexagonal.games.data.service.MyFirebaseMessagingService
 import com.openclassrooms.hexagonal.games.data.service.PostApi
-import com.openclassrooms.hexagonal.games.data.service.PostFakeApi
 import com.openclassrooms.hexagonal.games.data.useCase.user.CheckIfEmailExistsUseCase
 import com.openclassrooms.hexagonal.games.data.useCase.user.CreateUserUseCase
 import com.openclassrooms.hexagonal.games.data.useCase.user.DeleteUserUseCase

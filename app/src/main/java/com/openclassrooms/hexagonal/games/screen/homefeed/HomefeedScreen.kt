@@ -24,8 +24,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -146,10 +148,21 @@ private fun HomefeedList(
 }
 
 @Composable
-private fun HomefeedCell(
+fun HomefeedCell(
     post: Post,
     onPostClick: (Post) -> Unit,
 ) {
+    val author = remember { mutableStateOf<User?>(null) }
+
+    // Si l'auteur est null, on tente de le récupérer
+    LaunchedEffect(post.authorRef) {
+        // Simulation de la récupération de l'utilisateur à partir de Firestore
+        post.authorRef?.get()?.addOnSuccessListener { doc ->
+            val user = doc.toObject(User::class.java)
+            author.value = user
+        }
+    }
+
     ElevatedCard(
         modifier = Modifier.fillMaxWidth(),
         onClick = {
@@ -158,19 +171,22 @@ private fun HomefeedCell(
         Column(
             modifier = Modifier.padding(8.dp),
         ) {
+            // Utilisation de l'état pour afficher le nom de l'auteur
+            val authorName = author.value?.name ?: stringResource(id = R.string.anonymous)
             Text(
                 text = stringResource(
                     id = R.string.by,
-                    post.author?.firstname ?: "",
-                    post.author?.lastname ?: ""
+                    authorName
                 ),
                 style = MaterialTheme.typography.titleSmall
             )
+
             Text(
                 text = post.title,
                 style = MaterialTheme.typography.titleLarge
             )
-            if (post.photoUrl.isNullOrEmpty() == false) {
+
+            if (!post.photoUrl.isNullOrEmpty()) {
                 AsyncImage(
                     modifier = Modifier
                         .padding(top = 8.dp)
@@ -186,7 +202,8 @@ private fun HomefeedCell(
                     contentScale = ContentScale.Crop,
                 )
             }
-            if (post.description.isNullOrEmpty() == false) {
+
+            if (!post.description.isNullOrEmpty()) {
                 Text(
                     text = post.description,
                     style = MaterialTheme.typography.bodyMedium
@@ -195,6 +212,7 @@ private fun HomefeedCell(
         }
     }
 }
+
 
 @PreviewLightDark
 @PreviewScreenSizes
@@ -210,8 +228,8 @@ private fun HomefeedCellPreview() {
                 timestamp = 1,
                 author = User(
                     id = "1",
-                    firstname = "firstname",
-                    lastname = "lastname"
+                    name = "firstname lastname\"",
+
                 )
             ),
             onPostClick = {}
@@ -233,8 +251,8 @@ private fun HomefeedCellImagePreview() {
                 timestamp = 1,
                 author = User(
                     id = "1",
-                    firstname = "firstname",
-                    lastname = "lastname"
+                    name = "firstname lastname\"",
+
                 )
             ),
             onPostClick = {}

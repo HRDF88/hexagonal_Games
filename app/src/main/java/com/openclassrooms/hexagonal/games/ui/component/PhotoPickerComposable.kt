@@ -16,10 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,17 +23,17 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun PhotoPickerComposable() {
-    // Variable pour stocker l'URI de l'image sélectionnée
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-
+fun PhotoPickerComposable(
+    imageUri: Uri?,
+    onImageUriChanged: (Uri?) -> Unit
+) {
     // Enregistrer le résultat de l'activité de sélection de photo
     val pickMedia = rememberLauncherForActivityResult(
         contract = PickVisualMedia(), // Choisir l'image (ou la vidéo)
         onResult = { uri ->
             // Callback pour traiter le résultat
             if (uri != null) {
-                selectedImageUri = uri
+                onImageUriChanged(uri) // Mettre à jour `imageUri` dans le composant parent
                 Log.d("PhotoPicker", "Selected URI: $uri")
             } else {
                 Log.d("PhotoPicker", "No media selected")
@@ -54,9 +50,9 @@ fun PhotoPickerComposable() {
         verticalArrangement = Arrangement.Center
     ) {
         // Affichage de l'image sélectionnée ou d'un bouton
-        if (selectedImageUri != null) {
+        if (imageUri != null) {
             // Utiliser Coil pour afficher l'image sélectionnée à partir de l'URI
-            val painter = rememberAsyncImagePainter(selectedImageUri)
+            val painter = rememberAsyncImagePainter(imageUri)
             Image(painter = painter, contentDescription = "Selected Image", modifier = Modifier.size(200.dp))
         } else {
             // Affichage d'un message si aucune image n'est sélectionnée
@@ -74,8 +70,9 @@ fun PhotoPickerComposable() {
     }
 }
 
+
 @Composable
 @Preview(showBackground = true)
 fun PhotoPickerPreview() {
-    PhotoPickerComposable()
+    PhotoPickerComposable(imageUri = null, onImageUriChanged = {})
 }

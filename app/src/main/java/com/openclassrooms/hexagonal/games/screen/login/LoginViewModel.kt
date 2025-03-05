@@ -170,7 +170,7 @@ class LoginEnteredViewModel @Inject constructor(
 
             val userData = hashMapOf(
                 "email" to email,
-                "nom&prenom" to fullName,
+                "name" to fullName,
                 "createdAt" to System.currentTimeMillis()  // Timestamp pour savoir quand l'utilisateur a été créé
             )
 

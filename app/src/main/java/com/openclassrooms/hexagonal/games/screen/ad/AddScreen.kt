@@ -1,5 +1,6 @@
 package com.openclassrooms.hexagonal.games.screen.ad
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -63,6 +67,7 @@ fun AddScreen(
   ) { contentPadding ->
     val post by viewModel.post.collectAsStateWithLifecycle()
     val error by viewModel.error.collectAsStateWithLifecycle()
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
     
     CreatePost(
       modifier = Modifier.padding(contentPadding),
@@ -72,9 +77,13 @@ fun AddScreen(
       description = post.description ?: "",
       onDescriptionChanged = { viewModel.onAction(FormEvent.DescriptionChanged(it)) },
       onSaveClicked = {
-        viewModel.addPost()
+        viewModel.addPost( title = post.title,
+          description = post.description,
+          imageUri = imageUri)
         onSaveClick()
-      }
+      },
+      imageUri = imageUri,
+      onImageUriChanged = { imageUri = it }
     )
   }
 }
@@ -87,7 +96,9 @@ private fun CreatePost(
   description: String,
   onDescriptionChanged: (String) -> Unit,
   onSaveClicked: () -> Unit,
-  error: FormError?
+  error: FormError?,
+  imageUri: Uri?,
+  onImageUriChanged: (Uri?) -> Unit
 ) {
   val scrollState = rememberScrollState()
   
@@ -129,7 +140,7 @@ private fun CreatePost(
         label = { Text(stringResource(id = R.string.hint_description)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
       )
-      PhotoPickerComposable()
+      PhotoPickerComposable(imageUri = imageUri, onImageUriChanged = onImageUriChanged)
     }
 
 
@@ -158,7 +169,9 @@ private fun CreatePostPreview() {
       description = "description",
       onDescriptionChanged = { },
       onSaveClicked = { },
-      error = null
+      error = null,
+      imageUri = null,
+      onImageUriChanged = {}
     )
   }
 }
@@ -174,7 +187,9 @@ private fun CreatePostErrorPreview() {
       description = "description",
       onDescriptionChanged = { },
       onSaveClicked = { },
-      error = FormError.TitleError
+      error = FormError.TitleError,
+      imageUri = null,
+      onImageUriChanged = {}
     )
   }
 }
