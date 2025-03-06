@@ -7,10 +7,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -45,14 +49,13 @@ fun UserAccountManagementScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val errorMessage = uiState.error?.let {
-        stringResource(id = it) // Utilise l'ID de la ressource pour récupérer le message d'erreur
+        stringResource(id = it)
     } ?: ""
 
     var showDialog by remember { mutableStateOf(false) }
 
     SideEffect {
         if (errorMessage.isNotEmpty()) {
-            // Récupérer et afficher le message d'erreur
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
@@ -60,6 +63,14 @@ fun UserAccountManagementScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.tittle_user_management_screen)) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = ""
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Purple40)
             )
         },
@@ -93,19 +104,19 @@ fun UserAccountManagementScreen(
         }
     }
 
-    // Affichage du AlertDialog pour confirmation avant suppression
+    // Display the AlertDialog for account deletion confirmation
     if (showDialog) {
         AlertDialog(
             onDismissRequest = {
                 showDialog = false
-            },  // Ferme le dialogue si l'utilisateur clique en dehors
+            },  // Close dialog if clicked outside
             title = { Text(stringResource(R.string.delete_account_confirmation)) },
-            text = { Text(stringResource(R.string.are_you_sure_delete_account)) },  // Message de confirmation
+            text = { Text(stringResource(R.string.are_you_sure_delete_account)) },
             confirmButton = {
                 Button(
                     onClick = {
-                        viewModel.deleteAccount()  // Appelle la méthode de suppression
-                        showDialog = false  // Ferme le dialogue après confirmation
+                        viewModel.deleteAccount()
+                        showDialog = false
                         navController.navigate(Screen.Login.route)
                     }
                 ) {
@@ -116,7 +127,7 @@ fun UserAccountManagementScreen(
                 Button(
                     onClick = {
                         showDialog = false
-                    }  // Ferme simplement le dialogue sans rien faire
+                    }
                 ) {
                     Text(stringResource(R.string.cancel))
                 }

@@ -27,6 +27,7 @@ firebaseMessagingKtx = "24.1.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
+coil = { module = "io.coil-kt:coil", version.ref = "coilCompose" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 com-google-firebase-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 com-google-firebase-firebase-storage = { module = "com.google.firebase:firebase-storage", version.ref = "googleFirebaseStorage" }

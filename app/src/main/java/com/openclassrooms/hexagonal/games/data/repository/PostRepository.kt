@@ -1,7 +1,8 @@
 package com.openclassrooms.hexagonal.games.data.repository
 
 import android.net.Uri
-import com.openclassrooms.hexagonal.games.data.service.PostApi
+import com.openclassrooms.hexagonal.games.data.repositoryInterface.PostRepositoryInterface
+import com.openclassrooms.hexagonal.games.data.service.serviceInterface.PostApi
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -14,7 +15,7 @@ import javax.inject.Singleton
  * ensuring there's only one instance throughout the application.
  */
 @Singleton
-class PostRepository @Inject constructor(private val postApi: PostApi) {
+class PostRepository @Inject constructor(private val postApi: PostApi) : PostRepositoryInterface{
 
     /**
      * Retrieves a Flow object containing a list of Posts ordered by creation date
@@ -22,14 +23,14 @@ class PostRepository @Inject constructor(private val postApi: PostApi) {
      *
      * @return Flow containing a list of Posts.
      */
-    val posts: Flow<List<Post>> = postApi.getPosts()
+    override val posts: Flow<List<Post>> = postApi.getPosts()
 
     /**
      * Adds a new Post to the data source using the injected PostApi.
      *
      * @param post The Post object to be added.
      */
-    suspend fun addPost(
+    override suspend fun addPost(
         title: String,
         description: String?,
         imageUri: Uri?,

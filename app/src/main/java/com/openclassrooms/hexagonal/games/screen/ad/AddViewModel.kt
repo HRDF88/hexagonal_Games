@@ -4,8 +4,8 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.openclassrooms.hexagonal.games.data.repository.PostRepository
-import com.openclassrooms.hexagonal.games.data.service.FirebaseAuthService
+import com.openclassrooms.hexagonal.games.data.service.firebase.FirebaseAuthService
+import com.openclassrooms.hexagonal.games.data.useCase.post.AddPostUseCase
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +23,7 @@ import javax.inject.Inject
  * It utilizes dependency injection to retrieve a PostRepository instance for interacting with post data.
  */
 @HiltViewModel
-class AddViewModel @Inject constructor(private val postRepository: PostRepository, private val firebaseAuthService: FirebaseAuthService) : ViewModel() {
+class AddViewModel @Inject constructor(private val addPostUseCase: AddPostUseCase, private val firebaseAuthService: FirebaseAuthService) : ViewModel() {
   
   /**
    * Internal mutable state flow representing the current post being edited.
@@ -92,7 +92,7 @@ class AddViewModel @Inject constructor(private val postRepository: PostRepositor
       )
 
       viewModelScope.launch {
-        postRepository.addPost(
+        addPostUseCase.invoke(
           title = postToSave.title,
           description = postToSave.description,
           imageUri = postToSave.photoUrl?.let { Uri.parse(it) }, // Gérer le cas où `photoUrl` est null

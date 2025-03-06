@@ -5,14 +5,11 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.messaging.FirebaseMessaging
-import com.openclassrooms.hexagonal.games.data.service.MyFirebaseMessagingService
+import com.openclassrooms.hexagonal.games.data.service.firebase.MyFirebaseMessagingService
 import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.screen.ad.AddScreen
 import com.openclassrooms.hexagonal.games.screen.homefeed.HomefeedScreen
@@ -23,10 +20,8 @@ import com.openclassrooms.hexagonal.games.screen.login.LoginScreen
 import com.openclassrooms.hexagonal.games.screen.login.RegisterUserScreen
 import com.openclassrooms.hexagonal.games.screen.settings.SettingsScreen
 import com.openclassrooms.hexagonal.games.screen.userAccountManagement.UserAccountManagementScreen
-import com.openclassrooms.hexagonal.games.screen.userAccountManagement.UserAccountManagementViewModel
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 /**

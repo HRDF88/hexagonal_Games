@@ -1,16 +1,26 @@
 package com.openclassrooms.hexagonal.games.data.repository
 
-import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.openclassrooms.hexagonal.games.data.repositoryInterface.UserRepositoryInterface
-import com.openclassrooms.hexagonal.games.data.service.CollectionUserFirebaseApi
+import com.openclassrooms.hexagonal.games.data.service.firebase.CollectionUserFirebaseApi
 import javax.inject.Inject
 
-class UserRepository @Inject constructor(private val api: CollectionUserFirebaseApi) : UserRepositoryInterface {
+/**
+ * Repository class responsible for managing user data using Firebase.
+ * Implements [UserRepositoryInterface].
+ *
+ * @param api The Firebase API for user collection operations.
+ */
+class UserRepository @Inject constructor(private val api: CollectionUserFirebaseApi) :
+    UserRepositoryInterface {
 
     /**
-     * Ajoute un utilisateur
+     * Adds a new user to the Firebase Firestore collection.
+     *
+     * @param userId The unique identifier of the user.
+     * @param userData A map containing user data fields.
+     * @return A [Result] indicating success or failure.
      */
     override suspend fun createUser(userId: String, userData: Map<String, Any>): Result<Unit> {
         return try {
@@ -22,7 +32,10 @@ class UserRepository @Inject constructor(private val api: CollectionUserFirebase
     }
 
     /**
-     * Récupère les données de l'utilisateur
+     * Retrieves user data from Firebase Firestore.
+     *
+     * @param userId The unique identifier of the user.
+     * @return A [Result] containing a [DocumentSnapshot] if successful, or an error otherwise.
      */
     override suspend fun getUser(userId: String): Result<DocumentSnapshot?> {
         return try {
@@ -34,7 +47,10 @@ class UserRepository @Inject constructor(private val api: CollectionUserFirebase
     }
 
     /**
-     * Supprime un utilisateur
+     * Deletes a user from the Firebase Firestore collection.
+     *
+     * @param userId The unique identifier of the user.
+     * @return A [Result] indicating success or failure.
      */
     override suspend fun deleteUser(userId: String): Result<Unit> {
         return try {
@@ -45,6 +61,12 @@ class UserRepository @Inject constructor(private val api: CollectionUserFirebase
         }
     }
 
+    /**
+     * Retrieves user data based on email.
+     *
+     * @param email The email address of the user.
+     * @return A [Result] containing a [QuerySnapshot] if successful, or an error otherwise.
+     */
     override suspend fun getUserByEmail(email: String): Result<QuerySnapshot> {
         return api.getUserByEmail(email)
     }

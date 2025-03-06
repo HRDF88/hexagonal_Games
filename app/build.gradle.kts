@@ -57,6 +57,8 @@ dependencies {
   // FirebaseUI for Storage
   implementation (libs.firebase.ui.storage)
 
+  implementation(libs.coil)
+
 
   //DI
   implementation(libs.hilt)

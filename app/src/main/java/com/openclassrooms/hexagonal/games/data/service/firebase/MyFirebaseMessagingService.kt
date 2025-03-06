@@ -1,4 +1,4 @@
-package com.openclassrooms.hexagonal.games.data.service
+package com.openclassrooms.hexagonal.games.data.service.firebase
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -14,32 +14,64 @@ import com.google.firebase.messaging.RemoteMessage
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.ui.MainActivity
 
-
+/**
+ * Firebase service class that handles receiving and processing Firebase Cloud Messaging (FCM) notifications.
+ * It also manages the generation of new tokens when the app is installed or the token is refreshed.
+ */
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     val fireBaseMessaging = FirebaseMessaging.getInstance()
 
+    /**
+     * Called when a new token is generated or refreshed.
+     * This method is triggered when the FCM token is updated.
+     *
+     * @param token The new FCM token.
+     */
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.d("FCM", "Nouveau token : $token")
 
-        // Sauvegarde du token en local ou en base de données (Firestore, Backend...)
+        // Save the new token locally or send it to your server
         sendTokenToServer(token)
     }
 
+    /**
+     * Called when a new token is generated or refreshed.
+     * This method is triggered when the FCM token is updated.
+     *
+     * @param token The new FCM token.
+     */
     private fun sendTokenToServer(token: String) {
-        // TODO: Implémente l'envoi du token à Firestore
+        super.onNewToken(token)
+        Log.d("FCM", "Nouveau token : $token")
+
+        // Save the new token locally or send it to your server
+        sendTokenToServer(token)
     }
 
+    /**
+     * Sends the FCM token to the server for storage.
+     * This can be used to associate the token with a user's account or for other server-side processing.
+     *
+     * @param token The new FCM token to be sent to the server.
+     */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        // Vérifie si le message contient une notification
+        // Check if the message contains a notification
         remoteMessage.notification?.let {
             showNotification(it.title ?: "Notification", it.body ?: "")
         }
     }
 
+    /**
+     * Displays the notification to the user.
+     * This method builds and shows the notification using Android's NotificationManager.
+     *
+     * @param title The title of the notification.
+     * @param message The body content of the notification.
+     */
     private fun showNotification(title: String, message: String) {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -57,9 +89,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        // Création du canal de notification
+        // Create notification channel for devices running Android O or higher
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
@@ -69,6 +102,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             notificationManager.createNotificationChannel(channel)
         }
 
+        // Show the notification
         notificationManager.notify(0, notificationBuilder.build())
     }
 }

@@ -18,9 +18,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.openclassrooms.hexagonal.games.R
 
 @Composable
 fun PhotoPickerComposable(
@@ -56,7 +58,7 @@ fun PhotoPickerComposable(
             Image(painter = painter, contentDescription = "Selected Image", modifier = Modifier.size(200.dp))
         } else {
             // Affichage d'un message si aucune image n'est sélectionnée
-            Text("Aucune image sélectionnée")
+            Text(stringResource(R.string.no_select_photo))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -65,7 +67,7 @@ fun PhotoPickerComposable(
         Button(onClick = {
             pickMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) // Lancer le picker pour sélectionner uniquement des images
         }) {
-            Text("Sélectionner une photo")
+            Text(stringResource(R.string.select_picture))
         }
     }
 }

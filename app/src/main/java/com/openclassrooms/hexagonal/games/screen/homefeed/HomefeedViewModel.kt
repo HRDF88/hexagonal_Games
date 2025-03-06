@@ -1,11 +1,8 @@
 package com.openclassrooms.hexagonal.games.screen.homefeed
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.openclassrooms.hexagonal.games.data.repository.PostRepository
-import com.openclassrooms.hexagonal.games.data.service.CollectionUserFirebaseApi
+import com.openclassrooms.hexagonal.games.data.useCase.post.GetPostsUseCase
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,16 +16,11 @@ import javax.inject.Inject
  * allowing UI components to observe and react to changes in the posts data.
  */
 @HiltViewModel
-class HomefeedViewModel @Inject constructor(private val postRepository: PostRepository) :
+class HomefeedViewModel @Inject constructor(private val getPostsUseCase: GetPostsUseCase) :
   ViewModel() {
   
   private val _posts: MutableStateFlow<List<Post>> = MutableStateFlow(emptyList())
 
-  private val _authorName = MutableLiveData<String>("")
-  val authorName: LiveData<String> = _authorName
-
-  private val userApi = CollectionUserFirebaseApi()
-  
   /**
    * Returns a Flow observable containing the list of posts fetched from the repository.
    *
@@ -39,7 +31,7 @@ class HomefeedViewModel @Inject constructor(private val postRepository: PostRepo
   
   init {
     viewModelScope.launch {
-      postRepository.posts.collect {
+      getPostsUseCase.invoke().collect {
         _posts.value = it
       }
     }

@@ -1,11 +1,13 @@
 package com.openclassrooms.hexagonal.games.di
 
+import com.openclassrooms.hexagonal.games.data.repository.PostRepository
 import com.openclassrooms.hexagonal.games.data.repository.UserRepository
+import com.openclassrooms.hexagonal.games.data.repositoryInterface.PostRepositoryInterface
 import com.openclassrooms.hexagonal.games.data.repositoryInterface.UserRepositoryInterface
-import com.openclassrooms.hexagonal.games.data.service.CollectionUserFirebaseApi
-import com.openclassrooms.hexagonal.games.data.service.FirebaseStorageManager
-import com.openclassrooms.hexagonal.games.data.service.MyFirebaseMessagingService
-import com.openclassrooms.hexagonal.games.data.service.PostApi
+import com.openclassrooms.hexagonal.games.data.service.firebase.CollectionUserFirebaseApi
+import com.openclassrooms.hexagonal.games.data.service.firebase.CollectionPostFireBaseApi
+import com.openclassrooms.hexagonal.games.data.service.firebase.MyFirebaseMessagingService
+import com.openclassrooms.hexagonal.games.data.service.serviceInterface.PostApi
 import com.openclassrooms.hexagonal.games.data.useCase.user.CheckIfEmailExistsUseCase
 import com.openclassrooms.hexagonal.games.data.useCase.user.CreateUserUseCase
 import com.openclassrooms.hexagonal.games.data.useCase.user.DeleteUserUseCase
@@ -34,7 +36,7 @@ class AppModule {
   @Provides
   @Singleton
   fun providePostApi(): PostApi {
-    return FirebaseStorageManager()
+    return CollectionPostFireBaseApi()
   }
 
   @Provides
@@ -70,5 +72,11 @@ class AppModule {
   @Provides
   fun provideFirebaseMessagingService(): MyFirebaseMessagingService {
     return MyFirebaseMessagingService()
+  }
+
+  @Provides
+  @Singleton
+  fun providePostRepository(postApi : PostApi): PostRepositoryInterface {
+    return PostRepository(postApi)
   }
 }

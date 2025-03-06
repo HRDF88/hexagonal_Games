@@ -67,5 +67,9 @@
   <string name="cancel">Cancel</string>
   <string name="anonymous">Anonymous</string>
 
+  //Add post
+  <string name="select_picture">Select a photo</string>
+  <string name="no_select_photo">No image selected</string>
+
 
 </resources>
