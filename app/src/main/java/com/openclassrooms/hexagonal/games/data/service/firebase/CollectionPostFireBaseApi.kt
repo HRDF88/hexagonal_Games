@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.UUID
 
-class FirebaseStorageManager : PostApi {
+class CollectionPostFireBaseApi : PostApi {
 
     val storage = FirebaseStorage.getInstance()
     private val storageRef: StorageReference = storage.reference
