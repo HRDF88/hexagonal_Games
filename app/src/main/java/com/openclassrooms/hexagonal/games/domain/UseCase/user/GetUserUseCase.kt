@@ -1,4 +1,4 @@
-package com.openclassrooms.hexagonal.games.data.useCase.user
+package com.openclassrooms.hexagonal.games.domain.`Nouveau dossier`.user
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.openclassrooms.hexagonal.games.data.repositoryInterface.UserRepositoryInterface
