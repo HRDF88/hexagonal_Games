@@ -1,4 +1,4 @@
-package com.openclassrooms.hexagonal.games.domain.`Nouveau dossier`
+package com.openclassrooms.hexagonal.games.domain.UseCase
 
 import com.openclassrooms.hexagonal.games.data.repositoryInterface.PostRepositoryInterface
 import javax.inject.Inject

@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.openclassrooms.hexagonal.games.data.useCase.post.GetPostsUseCase
+import com.openclassrooms.hexagonal.games.domain.UseCase.GetPostsUseCase
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.utils.image.Base64Converter
 import com.openclassrooms.hexagonal.games.utils.image.BitmapConverter
@@ -21,36 +21,47 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HomefeedViewModel @Inject constructor(private val getPostsUseCase: GetPostsUseCase) :
-  ViewModel() {
+    ViewModel() {
 
-  private val _posts: MutableStateFlow<List<Post>> = MutableStateFlow(emptyList())
-  val posts: StateFlow<List<Post>> get() = _posts
+    /**
+     * StateFlow holding the list of posts.
+     */
+    private val _posts: MutableStateFlow<List<Post>> = MutableStateFlow(emptyList())
+    val posts: StateFlow<List<Post>> get() = _posts
 
-  private val _postImages: MutableStateFlow<Map<String, Bitmap>> = MutableStateFlow(emptyMap()) // Contiendra les images converties
-  val postImages: StateFlow<Map<String, Bitmap>> get() = _postImages
+    /**
+     * StateFlow holding a map of post IDs to their respective Bitmap images.
+     */
+    private val _postImages: MutableStateFlow<Map<String, Bitmap>> = MutableStateFlow(emptyMap())
+    val postImages: StateFlow<Map<String, Bitmap>> get() = _postImages
 
-  init {
-    viewModelScope.launch {
-      getPostsUseCase.invoke().collect { posts ->
-        _posts.value = posts
-        // Conversion des images Base64 après avoir reçu les posts
-        val images = posts.associate { post ->
-          post.id to convertBase64ToBitmap(post.photoUrl)
+    init {
+        viewModelScope.launch {
+            getPostsUseCase.invoke().collect { posts ->
+                _posts.value = posts
+                // Convert Base64 images after receiving posts
+                val images = posts.associate { post ->
+                    post.id to convertBase64ToBitmap(post.photoUrl)
+                }
+                _postImages.value = images as Map<String, Bitmap>
+            }
         }
-        _postImages.value = images as Map<String, Bitmap>
-      }
     }
-  }
 
-  // Fonction pour convertir le Base64 en Bitmap en utilisant les convertisseurs
-  private fun convertBase64ToBitmap(base64String: String?): Bitmap? {
-    if (base64String.isNullOrEmpty()) return null
-    return try {
-      val byteArray = Base64Converter.fromBase64(base64String)
-      BitmapConverter.fromByteArray(byteArray)
-    } catch (e: Exception) {
-      Log.e("HomefeedViewModel", "Error converting Base64 to Bitmap", e)
-      null
+    /**
+     * Converts a Base64-encoded string into a Bitmap using the appropriate converters.
+     *
+     * @param base64String The Base64-encoded string representing an image.
+     * @return The decoded Bitmap, or null if conversion fails.
+     */
+    private fun convertBase64ToBitmap(base64String: String?): Bitmap? {
+        if (base64String.isNullOrEmpty()) return null
+        return try {
+            val byteArray = Base64Converter.fromBase64(base64String)
+            BitmapConverter.fromByteArray(byteArray)
+        } catch (e: Exception) {
+            Log.e("HomefeedViewModel", "Error converting Base64 to Bitmap", e)
+            null
+        }
     }
-  }
 }

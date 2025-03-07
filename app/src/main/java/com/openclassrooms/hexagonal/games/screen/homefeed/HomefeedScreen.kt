@@ -96,11 +96,11 @@ fun HomefeedScreen(
                         )
                         DropdownMenuItem(
                             onClick = {
-                                onUserAccountClick()  // Appel la fonction pour la gestion du compte utilisateur
+                                onUserAccountClick()
                             },
                             text = {
                                 Text(
-                                    text = stringResource(id = R.string.action_user_account)  // Ajoute le texte pour l'élément "Compte utilisateur"
+                                    text = stringResource(id = R.string.action_user_account)
                                 )
                             }
                         )
@@ -160,7 +160,7 @@ fun HomefeedCell(
 ) {
     val author = remember { mutableStateOf<User?>(null) }
 
-    // Si l'auteur est null, on tente de le récupérer
+
     LaunchedEffect(post.authorRef) {
         post.authorRef?.get()?.addOnSuccessListener { doc ->
             val user = doc.toObject(User::class.java)
@@ -191,7 +191,7 @@ fun HomefeedCell(
                 style = MaterialTheme.typography.titleLarge
             )
 
-            // Récupérer l'image convertie depuis le ViewModel
+
             val image = viewModel.postImages.collectAsState().value[post.id]
 
             if (image != null) {
@@ -217,7 +217,6 @@ fun HomefeedCell(
 }
 
 
-
 @PreviewLightDark
 @PreviewScreenSizes
 @Composable
@@ -234,7 +233,7 @@ private fun HomefeedCellPreview() {
                     id = "1",
                     name = "firstname lastname\"",
 
-                )
+                    )
             ),
             onPostClick = {}
         )
@@ -257,7 +256,7 @@ private fun HomefeedCellImagePreview() {
                     id = "1",
                     name = "firstname lastname\"",
 
-                )
+                    )
             ),
             onPostClick = {}
         )

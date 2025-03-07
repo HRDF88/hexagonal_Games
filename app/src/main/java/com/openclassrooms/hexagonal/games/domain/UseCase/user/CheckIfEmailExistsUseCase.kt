@@ -1,4 +1,4 @@
-package com.openclassrooms.hexagonal.games.domain.`Nouveau dossier`.user
+package com.openclassrooms.hexagonal.games.domain.UseCase.user
 
 import android.util.Log
 import com.openclassrooms.hexagonal.games.data.repositoryInterface.UserRepositoryInterface

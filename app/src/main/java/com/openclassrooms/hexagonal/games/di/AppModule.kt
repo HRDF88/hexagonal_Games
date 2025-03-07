@@ -11,11 +11,11 @@ import com.openclassrooms.hexagonal.games.data.service.firebase.CollectionPostFi
 import com.openclassrooms.hexagonal.games.data.service.firebase.FirebaseImageApi
 import com.openclassrooms.hexagonal.games.data.service.firebase.MyFirebaseMessagingService
 import com.openclassrooms.hexagonal.games.data.service.serviceInterface.PostApi
-import com.openclassrooms.hexagonal.games.data.useCase.image.UploadImageUseCase
-import com.openclassrooms.hexagonal.games.data.useCase.user.CheckIfEmailExistsUseCase
-import com.openclassrooms.hexagonal.games.data.useCase.user.CreateUserUseCase
-import com.openclassrooms.hexagonal.games.data.useCase.user.DeleteUserUseCase
-import com.openclassrooms.hexagonal.games.data.useCase.user.GetUserUseCase
+import com.openclassrooms.hexagonal.games.domain.UseCase.UploadImageUseCase
+import com.openclassrooms.hexagonal.games.domain.UseCase.user.CheckIfEmailExistsUseCase
+import com.openclassrooms.hexagonal.games.domain.UseCase.user.CreateUserUseCase
+import com.openclassrooms.hexagonal.games.domain.UseCase.user.DeleteUserUseCase
+import com.openclassrooms.hexagonal.games.domain.UseCase.user.GetUserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -69,7 +69,7 @@ class AppModule {
   }
 
   @Provides
-  fun provideCheckIfEmailExistsUseCase(userRepository: UserRepositoryInterface) : CheckIfEmailExistsUseCase{
+  fun provideCheckIfEmailExistsUseCase(userRepository: UserRepositoryInterface) : CheckIfEmailExistsUseCase {
     return CheckIfEmailExistsUseCase(userRepository)
   }
 

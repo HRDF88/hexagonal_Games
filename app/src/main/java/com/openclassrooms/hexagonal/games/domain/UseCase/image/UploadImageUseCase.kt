@@ -1,4 +1,4 @@
-package com.openclassrooms.hexagonal.games.domain.`Nouveau dossier`
+package com.openclassrooms.hexagonal.games.domain.UseCase
 
 import android.net.Uri
 import com.google.android.gms.tasks.Task

@@ -8,8 +8,18 @@ import android.graphics.Matrix
 import android.graphics.Color
 import android.net.Uri
 
+/**
+ * Utility object for various Bitmap operations such as conversion, resizing, and rotation.
+ */
 object BitmapUtils {
 
+    /**
+     * Converts a URI to a Bitmap.
+     *
+     * @param context The application context.
+     * @param uri The URI of the image to convert.
+     * @return The decoded Bitmap, or null if an error occurs.
+     */
     fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
         return try {
             val inputStream = context.contentResolver.openInputStream(uri)
@@ -21,15 +31,28 @@ object BitmapUtils {
     }
 
 
-    // Crée un Bitmap blanc avec une largeur et une hauteur spécifiques
+    /**
+     * Creates a white Bitmap with the specified width and height.
+     *
+     * @param width The width of the Bitmap.
+     * @param height The height of the Bitmap.
+     * @return A Bitmap filled with white color.
+     */
     fun create(width: Int, height: Int): Bitmap {
         return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).apply {
             val canvas = Canvas(this)
-            canvas.drawColor(Color.WHITE) // Remplit le Bitmap avec une couleur blanche
+            canvas.drawColor(Color.WHITE)
         }
     }
 
-    // Redimensionne un Bitmap tout en conservant son aspect ratio
+    /**
+     * Resizes a Bitmap while maintaining its aspect ratio.
+     *
+     * @param bitmap The original Bitmap to resize.
+     * @param maxWidth The maximum width allowed.
+     * @param maxHeight The maximum height allowed.
+     * @return The resized Bitmap.
+     */
     fun resize(bitmap: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap {
         val aspectRatio = bitmap.width.toFloat() / bitmap.height.toFloat()
         var newWidth = maxWidth
@@ -43,7 +66,13 @@ object BitmapUtils {
         return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
     }
 
-    // Rotation d'un Bitmap (par exemple, pour corriger l'orientation)
+    /**
+     * Rotates a Bitmap by a specified number of degrees.
+     *
+     * @param bitmap The original Bitmap to rotate.
+     * @param degrees The number of degrees to rotate the Bitmap.
+     * @return The rotated Bitmap.
+     */
     fun rotate(bitmap: Bitmap, degrees: Float): Bitmap {
         val matrix = Matrix().apply { postRotate(degrees) }
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
