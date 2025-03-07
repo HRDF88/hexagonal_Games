@@ -1,11 +1,14 @@
 package com.openclassrooms.hexagonal.games.screen.homefeed
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -25,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -151,12 +156,12 @@ private fun HomefeedList(
 fun HomefeedCell(
     post: Post,
     onPostClick: (Post) -> Unit,
+    viewModel: HomefeedViewModel = hiltViewModel()
 ) {
     val author = remember { mutableStateOf<User?>(null) }
 
     // Si l'auteur est null, on tente de le récupérer
     LaunchedEffect(post.authorRef) {
-        // Simulation de la récupération de l'utilisateur à partir de Firestore
         post.authorRef?.get()?.addOnSuccessListener { doc ->
             val user = doc.toObject(User::class.java)
             author.value = user
@@ -171,7 +176,7 @@ fun HomefeedCell(
         Column(
             modifier = Modifier.padding(8.dp),
         ) {
-            // Utilisation de l'état pour afficher le nom de l'auteur
+            // Affichage du nom de l'auteur
             val authorName = author.value?.name ?: stringResource(id = R.string.anonymous)
             Text(
                 text = stringResource(
@@ -186,20 +191,18 @@ fun HomefeedCell(
                 style = MaterialTheme.typography.titleLarge
             )
 
-            if (!post.photoUrl.isNullOrEmpty()) {
-                AsyncImage(
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .fillMaxWidth()
-                        .heightIn(max = 200.dp)
-                        .aspectRatio(ratio = 16 / 9f),
-                    model = post.photoUrl,
-                    imageLoader = LocalContext.current.imageLoader.newBuilder()
-                        .logger(DebugLogger())
-                        .build(),
-                    placeholder = ColorPainter(Color.DarkGray),
+            // Récupérer l'image convertie depuis le ViewModel
+            val image = viewModel.postImages.collectAsState().value[post.id]
+
+            if (image != null) {
+                Image(
+                    bitmap = image.asImageBitmap(),
                     contentDescription = "image",
-                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .sizeIn(maxHeight = 350.dp)  // Limites maximales 250x250 px
+                        .padding(top = 8.dp),
+                    contentScale = ContentScale.Fit
                 )
             }
 
@@ -212,6 +215,7 @@ fun HomefeedCell(
         }
     }
 }
+
 
 
 @PreviewLightDark

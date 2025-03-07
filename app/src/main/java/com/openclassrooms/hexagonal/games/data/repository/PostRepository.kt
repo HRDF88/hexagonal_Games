@@ -1,6 +1,5 @@
 package com.openclassrooms.hexagonal.games.data.repository
 
-import android.net.Uri
 import com.openclassrooms.hexagonal.games.data.repositoryInterface.PostRepositoryInterface
 import com.openclassrooms.hexagonal.games.data.service.serviceInterface.PostApi
 import com.openclassrooms.hexagonal.games.domain.model.Post
@@ -33,7 +32,7 @@ class PostRepository @Inject constructor(private val postApi: PostApi) : PostRep
     override suspend fun addPost(
         title: String,
         description: String?,
-        imageUri: Uri?,
+        imageUri: String?,
         authorId: String,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit

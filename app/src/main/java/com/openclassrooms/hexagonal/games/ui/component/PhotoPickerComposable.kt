@@ -1,6 +1,6 @@
 package com.openclassrooms.hexagonal.games.ui.component
 
-import android.net.Uri
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -16,34 +16,53 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.openclassrooms.hexagonal.games.R
+import com.openclassrooms.hexagonal.games.utils.image.BitmapUtils
+import com.openclassrooms.hexagonal.games.utils.image.BitmapUtils.uriToBitmap
+import com.openclassrooms.hexagonal.games.utils.image.SizeBitmapCONST
 
 @Composable
 fun PhotoPickerComposable(
-    imageUri: Uri?,
-    onImageUriChanged: (Uri?) -> Unit
+    imageBitmap: Bitmap?, // Utilisation de imageBitmap ici pour afficher l'image sélectionnée
+    onImageBitmapChanged: (Bitmap?) -> Unit // Nouveau callback pour passer l'image redimensionnée
 ) {
-    // Enregistrer le résultat de l'activité de sélection de photo
+    val maxHeight = SizeBitmapCONST.maxHeight
+    val maxWidth = SizeBitmapCONST.maxWidth
+    val context = LocalContext.current
+
+    var resizedBitmap by remember { mutableStateOf<Bitmap?>(null) }
+
+    // Lancer l'activité de sélection de photo
     val pickMedia = rememberLauncherForActivityResult(
-        contract = PickVisualMedia(), // Choisir l'image (ou la vidéo)
+        contract = PickVisualMedia(),
         onResult = { uri ->
-            // Callback pour traiter le résultat
             if (uri != null) {
-                onImageUriChanged(uri) // Mettre à jour `imageUri` dans le composant parent
                 Log.d("PhotoPicker", "Selected URI: $uri")
+
+                // Charger et redimensionner l'image
+                val originalBitmap = uriToBitmap(context, uri)
+                if (originalBitmap != null) {
+                    val newBitmap = BitmapUtils.resize(originalBitmap, maxWidth, maxHeight)
+                    resizedBitmap = newBitmap
+                    onImageBitmapChanged(newBitmap) // Mettre à jour l'image sélectionnée via le callback
+                }
             } else {
                 Log.d("PhotoPicker", "No media selected")
             }
         }
     )
 
-    // UI
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,21 +70,30 @@ fun PhotoPickerComposable(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Affichage de l'image sélectionnée ou d'un bouton
-        if (imageUri != null) {
-            // Utiliser Coil pour afficher l'image sélectionnée à partir de l'URI
-            val painter = rememberAsyncImagePainter(imageUri)
-            Image(painter = painter, contentDescription = "Selected Image", modifier = Modifier.size(200.dp))
+        // Si l'image est redimensionnée ou fournie, l'afficher
+        if (imageBitmap != null) {
+            Image(
+                bitmap = imageBitmap.asImageBitmap(),
+                contentDescription = "Selected Image",
+                modifier = Modifier.size(200.dp)
+            )
+        } else if (resizedBitmap != null) {
+            // Sinon, afficher l'image redimensionnée
+            Image(
+                bitmap = resizedBitmap!!.asImageBitmap(),
+                contentDescription = "Resized Image",
+                modifier = Modifier.size(200.dp)
+            )
         } else {
-            // Affichage d'un message si aucune image n'est sélectionnée
+            // Message si aucune image n'est sélectionnée
             Text(stringResource(R.string.no_select_photo))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Bouton pour ouvrir le Photo Picker
+        // Bouton pour ouvrir le sélecteur de photo
         Button(onClick = {
-            pickMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) // Lancer le picker pour sélectionner uniquement des images
+            pickMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
         }) {
             Text(stringResource(R.string.select_picture))
         }
@@ -76,5 +104,5 @@ fun PhotoPickerComposable(
 @Composable
 @Preview(showBackground = true)
 fun PhotoPickerPreview() {
-    PhotoPickerComposable(imageUri = null, onImageUriChanged = {})
+    PhotoPickerComposable(imageBitmap = null, onImageBitmapChanged = {})
 }

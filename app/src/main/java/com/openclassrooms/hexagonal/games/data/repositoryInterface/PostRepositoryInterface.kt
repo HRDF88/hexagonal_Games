@@ -1,6 +1,5 @@
 package com.openclassrooms.hexagonal.games.data.repositoryInterface
 
-import android.net.Uri
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import kotlinx.coroutines.flow.Flow
 
@@ -29,7 +28,7 @@ interface PostRepositoryInterface {
     suspend fun addPost(
         title: String,
         description: String?,
-        imageUri: Uri?,
+        imageUri: String?,
         authorId: String,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit

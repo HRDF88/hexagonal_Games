@@ -1,13 +1,16 @@
 package com.openclassrooms.hexagonal.games.screen.ad
 
-import android.net.Uri
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.hexagonal.games.data.service.firebase.FirebaseAuthService
+import com.openclassrooms.hexagonal.games.data.useCase.image.UploadImageUseCase
 import com.openclassrooms.hexagonal.games.data.useCase.post.AddPostUseCase
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
+import com.openclassrooms.hexagonal.games.utils.image.Base64Converter
+import com.openclassrooms.hexagonal.games.utils.image.BitmapConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,7 +26,7 @@ import javax.inject.Inject
  * It utilizes dependency injection to retrieve a PostRepository instance for interacting with post data.
  */
 @HiltViewModel
-class AddViewModel @Inject constructor(private val addPostUseCase: AddPostUseCase, private val firebaseAuthService: FirebaseAuthService) : ViewModel() {
+class AddViewModel @Inject constructor(private val uploadImageUseCase: UploadImageUseCase,private val addPostUseCase: AddPostUseCase, private val firebaseAuthService: FirebaseAuthService) : ViewModel() {
   
   /**
    * Internal mutable state flow representing the current post being edited.
@@ -83,7 +86,7 @@ class AddViewModel @Inject constructor(private val addPostUseCase: AddPostUseCas
    *
    * TODO: Implement logic to retrieve the current user.
    */
-  fun addPost(title: String, description: String?, imageUri: Uri?) {
+  fun addPost(title: String, description: String?, imageBitmap: Bitmap?) {
     val currentUser = firebaseAuthService.getCurrentUser()
 
     if (currentUser != null) {
@@ -92,19 +95,47 @@ class AddViewModel @Inject constructor(private val addPostUseCase: AddPostUseCas
       )
 
       viewModelScope.launch {
-        addPostUseCase.invoke(
-          title = postToSave.title,
-          description = postToSave.description,
-          imageUri = postToSave.photoUrl?.let { Uri.parse(it) }, // Gérer le cas où `photoUrl` est null
-          authorId = postToSave.author!!.id,
-          onSuccess = { Log.d("PostViewModel", "Post ajouté avec succès") },
-          onFailure = { error -> Log.e("PostViewModel", "Erreur lors de l'ajout du post", error) }
-        )
+        try {
+          // Vérification si l'image est bien reçue
+          if (imageBitmap != null) {
+            Log.d("PostViewModel", "Image reçue pour conversion.")
+          } else {
+            Log.d("PostViewModel", "Aucune image reçue.")
+          }
+
+          // Convertir l'image en ByteArray
+          val byteArray: ByteArray? = imageBitmap?.let {
+            val byteArrayConverted = BitmapConverter.toByteArray(it, Bitmap.CompressFormat.PNG, 100)
+            Log.d("PostViewModel", "ByteArray converti : ${byteArrayConverted.size} octets")
+            byteArrayConverted
+          }
+
+          // Convertir le ByteArray en Base64
+          val uploadedImageUrl: String? = byteArray?.let {
+            val base64String = Base64Converter.toBase64(it)
+            Log.d("PostViewModel", "Image encodée en Base64 : ${base64String.take(100)}...") // Afficher seulement les 100 premiers caractères
+            base64String
+          }
+
+          Log.d("PostViewModel", "Image finale à stocker : $uploadedImageUrl")
+
+          addPostUseCase.invoke(
+            title = postToSave.title,
+            description = postToSave.description,
+            imageUri = uploadedImageUrl, // Base64 string
+            authorId = postToSave.author!!.id,
+            onSuccess = { Log.d("PostViewModel", "Post ajouté avec succès") },
+            onFailure = { error -> Log.e("PostViewModel", "Erreur lors de l'ajout du post", error) }
+          )
+        } catch (e: Exception) {
+          Log.e("PostViewModel", "Erreur lors du processus d'ajout du post", e)
+        }
       }
     } else {
       Log.e("PostViewModel", "Aucun utilisateur connecté")
     }
   }
+
 
 
 

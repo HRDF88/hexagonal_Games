@@ -1,6 +1,5 @@
 package com.openclassrooms.hexagonal.games.data.useCase.post
 
-import android.net.Uri
 import com.openclassrooms.hexagonal.games.data.repositoryInterface.PostRepositoryInterface
 import javax.inject.Inject
 
@@ -32,7 +31,7 @@ class AddPostUseCase @Inject constructor(
     suspend operator fun invoke(
         title: String,
         description: String?,
-        imageUri: Uri?,
+        imageUri: String?,
         authorId: String,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit

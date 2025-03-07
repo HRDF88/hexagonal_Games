@@ -1,6 +1,6 @@
 package com.openclassrooms.hexagonal.games.data.service.firebase
 
-import android.net.Uri
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
@@ -69,7 +69,7 @@ class CollectionPostFireBaseApi : PostApi {
      *
      * @param title The title of the post.
      * @param description The description of the post (nullable).
-     * @param imageUri The URI of the image to be uploaded (nullable).
+     * @param imageUri The url string of the image to be uploaded (nullable).
      * @param authorId The ID of the author of the post.
      * @param onSuccess A callback that will be triggered upon successful post creation.
      * @param onFailure A callback that will be triggered if an error occurs during the post creation.
@@ -77,57 +77,40 @@ class CollectionPostFireBaseApi : PostApi {
     override suspend fun addPost(
         title: String,
         description: String?,
-        imageUri: Uri?,
+        imageUri: String?,
         authorId: String,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        val postId = UUID.randomUUID().toString() // Generate a unique post ID
+        val postId = UUID.randomUUID().toString() // Générer un ID unique pour le post
+        Log.d("AddPost", "Generated post ID: $postId")
 
-        // Get a reference to the author from the author ID
+        // Récupérer la référence de l'auteur
         val authorRef = firestore.collection("users").document(authorId)
+        Log.d("AddPost", "Author reference: $authorRef")
 
-        if (imageUri != null) {
-            // Create a unique storage path for the image
-            val imageRef = storageRef.child("post_images/$postId.jpg")
+        // Construire l'objet post avec ou sans image
+        val post = hashMapOf(
+            "id" to postId,
+            "title" to title,
+            "description" to description,
+            "photoUrl" to imageUri, // Déjà une URL ou null
+            "timestamp" to System.currentTimeMillis(),
+            "authorRef" to authorRef
+        )
 
-            // Upload the image to Firebase Storage
-            imageRef.putFile(imageUri)
-                .addOnSuccessListener { taskSnapshot ->
-                    // Get the download URL of the image
-                    imageRef.downloadUrl.addOnSuccessListener { uri ->
-                        val post = hashMapOf(
-                            "id" to postId,
-                            "title" to title,
-                            "description" to description,
-                            "photoUrl" to uri.toString(),
-                            "timestamp" to System.currentTimeMillis(),
-                            "authorRef" to authorRef // Use the reference of the author
-                        )
-
-                        // Add the post to Firestore
-                        postCollection.document(postId)
-                            .set(post)
-                            .addOnSuccessListener { onSuccess() }
-                            .addOnFailureListener { e -> onFailure(e) }
-                    }
-                }
-                .addOnFailureListener { e -> onFailure(e) }
-        } else {
-            // If no image, create the post without the photoUrl
-            val post = hashMapOf(
-                "id" to postId,
-                "title" to title,
-                "description" to description,
-                "photoUrl" to null,
-                "timestamp" to System.currentTimeMillis(),
-                "authorRef" to authorRef
-            )
-
-            postCollection.document(postId)
-                .set(post)
-                .addOnSuccessListener { onSuccess() }
-                .addOnFailureListener { e -> onFailure(e) }
-        }
+        // Ajouter le post dans Firestore
+        postCollection.document(postId)
+            .set(post)
+            .addOnSuccessListener {
+                Log.d("AddPost", "Post ajouté avec succès")
+                onSuccess()
+            }
+            .addOnFailureListener { e ->
+                Log.e("AddPost", "Erreur lors de l'ajout du post", e)
+                onFailure(e)
+            }
     }
+
+
 }

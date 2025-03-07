@@ -1,6 +1,8 @@
 package com.openclassrooms.hexagonal.games.screen.ad
 
+import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -67,8 +69,8 @@ fun AddScreen(
   ) { contentPadding ->
     val post by viewModel.post.collectAsStateWithLifecycle()
     val error by viewModel.error.collectAsStateWithLifecycle()
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-    
+    var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
+
     CreatePost(
       modifier = Modifier.padding(contentPadding),
       error = error,
@@ -77,13 +79,19 @@ fun AddScreen(
       description = post.description ?: "",
       onDescriptionChanged = { viewModel.onAction(FormEvent.DescriptionChanged(it)) },
       onSaveClicked = {
-        viewModel.addPost( title = post.title,
+        Log.d("AddScreen", "Image Bitmap on Save: $imageBitmap")
+        viewModel.addPost(
+          title = post.title,
           description = post.description,
-          imageUri = imageUri)
+          imageBitmap = imageBitmap
+        )
         onSaveClick()
       },
-      imageUri = imageUri,
-      onImageUriChanged = { imageUri = it }
+      imageBitmap = imageBitmap,
+      onImageBitmapChanged = { newBitmap ->
+        Log.d("AddScreen", "Image Bitmap updated: $newBitmap")
+        imageBitmap = newBitmap
+      }
     )
   }
 }
@@ -97,11 +105,11 @@ private fun CreatePost(
   onDescriptionChanged: (String) -> Unit,
   onSaveClicked: () -> Unit,
   error: FormError?,
-  imageUri: Uri?,
-  onImageUriChanged: (Uri?) -> Unit
+  imageBitmap: Bitmap?,
+  onImageBitmapChanged: (Bitmap?) -> Unit
 ) {
   val scrollState = rememberScrollState()
-  
+
   Column(
     modifier = modifier
       .padding(16.dp)
@@ -140,11 +148,11 @@ private fun CreatePost(
         label = { Text(stringResource(id = R.string.hint_description)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
       )
-      PhotoPickerComposable(imageUri = imageUri, onImageUriChanged = onImageUriChanged)
+      PhotoPickerComposable(imageBitmap = imageBitmap, onImageBitmapChanged = { newBitmap ->
+        Log.d("CreatePost", "Received Image Bitmap in CreatePost: $newBitmap")
+        onImageBitmapChanged(newBitmap)
+      })
     }
-
-
-
 
     Button(
       enabled = error == null,
@@ -158,6 +166,7 @@ private fun CreatePost(
   }
 }
 
+
 @PreviewLightDark
 @PreviewScreenSizes
 @Composable
@@ -170,8 +179,8 @@ private fun CreatePostPreview() {
       onDescriptionChanged = { },
       onSaveClicked = { },
       error = null,
-      imageUri = null,
-      onImageUriChanged = {}
+      imageBitmap = null,
+      onImageBitmapChanged = {}
     )
   }
 }
@@ -188,8 +197,8 @@ private fun CreatePostErrorPreview() {
       onDescriptionChanged = { },
       onSaveClicked = { },
       error = FormError.TitleError,
-      imageUri = null,
-      onImageUriChanged = {}
+      imageBitmap = null,
+      onImageBitmapChanged = {}
     )
   }
 }
