@@ -71,5 +71,9 @@
     <string name="select_picture">Sélectionner une photo</string>
     <string name="no_select_photo">Aucune image sélectionnée</string>
 
+    //Detail screen
+    <string name="loading">Chargement...</string>
+
+
 
 </resources>

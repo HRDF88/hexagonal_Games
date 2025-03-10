@@ -40,4 +40,7 @@ class PostRepository @Inject constructor(private val postApi: PostApi) : PostRep
         postApi.addPost(title, description, imageUri, authorId, onSuccess, onFailure)
     }
 
+    override suspend fun getPostById(postId: String): Flow<Post?> {
+        return postApi.getPostById(postId)
+    }
 }

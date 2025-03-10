@@ -33,4 +33,6 @@ interface PostRepositoryInterface {
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     )
+
+    suspend fun getPostById(postId: String): Flow<Post?>
 }

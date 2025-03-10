@@ -11,12 +11,15 @@ import androidx.compose.runtime.Composable
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.openclassrooms.hexagonal.games.data.service.firebase.MyFirebaseMessagingService
 import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.screen.ad.AddScreen
+import com.openclassrooms.hexagonal.games.screen.detail.DetailPostScreen
 import com.openclassrooms.hexagonal.games.screen.homefeed.HomefeedScreen
 import com.openclassrooms.hexagonal.games.screen.login.FindPasswordScreen
 import com.openclassrooms.hexagonal.games.screen.login.LoginEnteredScreen
@@ -74,6 +77,7 @@ class MainActivity :
                 }
             }
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -102,8 +106,8 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
     ) {
         composable(route = Screen.Homefeed.route) {
             HomefeedScreen(
-                onPostClick = {
-                    //TODO
+                onPostClick = { post ->
+                    navHostController.navigate("${Screen.DetailPost.route}/${post.id}")
                 },
                 onSettingsClick = {
                     navHostController.navigate(Screen.Settings.route)
@@ -156,6 +160,14 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
             UserAccountManagementScreen(
                 navController = navHostController
             )
+        }
+
+        composable(
+            route = "${Screen.DetailPost.route}/{postId}",
+            arguments = listOf(navArgument("postId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val postId = backStackEntry.arguments?.getString("postId")
+            DetailPostScreen(navController = navHostController, postId = postId, onFABClick = {})
         }
 
 

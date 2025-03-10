@@ -23,4 +23,6 @@ sealed class Screen(
     data object FindPassword : Screen("findPassword")
 
     data object UserAccount : Screen("userAccount")
+
+    data object DetailPost : Screen("detailPost")
 }

@@ -8,10 +8,16 @@ import com.google.firebase.storage.StorageReference
 import com.openclassrooms.hexagonal.games.data.service.serviceInterface.PostApi
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
 import java.util.UUID
+import kotlin.coroutines.resume
 
 /**
  * Implementation of [PostApi] that handles interaction with Firebase Firestore and Firebase Storage.
@@ -111,6 +117,32 @@ class CollectionPostFireBaseApi : PostApi {
                 onFailure(e)
             }
     }
+
+    /**
+     * Retrieves a specific post from Firebase Firestore using its ID.
+     *
+     * @param postId The ID of the post to retrieve.
+     * @return A [Flow] emitting the [Post] object or null if not found.
+     */
+    override suspend fun getPostById(postId: String): Flow<Post?> = flow {
+        try {
+            val document = postCollection.document(postId).get().await()
+            val post = document.toObject(Post::class.java)
+
+            if (post?.authorRef != null) {
+                post.author = suspendCancellableCoroutine { continuation ->
+                    User.fromDocumentReference(post.authorRef) { author ->
+                        continuation.resume(author)
+                    }
+                }
+            }
+
+            emit(post)
+        } catch (e: Exception) {
+            Log.e("getPostById", "Erreur lors de la récupération du post", e)
+            emit(null)
+        }
+    }.flowOn(Dispatchers.IO)
 
 
 }

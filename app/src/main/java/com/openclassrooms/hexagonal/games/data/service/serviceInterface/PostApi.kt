@@ -2,6 +2,7 @@ package com.openclassrooms.hexagonal.games.data.service.serviceInterface
 
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 /**
  * This interface defines the contract for interacting with Post data from a data source.
@@ -36,4 +37,6 @@ interface PostApi {
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     )
+
+    suspend fun getPostById(postId: String): Flow<Post?>
 }
