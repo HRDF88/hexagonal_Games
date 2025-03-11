@@ -42,7 +42,7 @@ data class Post(
 
   var author: User? = null
 ) : Serializable{
-  // Constructeur sans argument requis par Firestore
+
   constructor() : this("", "", null, null, 0L, null, null)
 }
 

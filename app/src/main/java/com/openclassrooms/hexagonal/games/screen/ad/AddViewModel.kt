@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.hexagonal.games.data.service.firebase.FirebaseAuthService
-import com.openclassrooms.hexagonal.games.domain.UseCase.UploadImageUseCase
 import com.openclassrooms.hexagonal.games.domain.UseCase.AddPostUseCase
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
@@ -27,7 +26,6 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class AddViewModel @Inject constructor(
-    private val uploadImageUseCase: UploadImageUseCase,
     private val addPostUseCase: AddPostUseCase,
     private val firebaseAuthService: FirebaseAuthService
 ) : ViewModel() {

@@ -13,7 +13,7 @@ import kotlinx.coroutines.tasks.await
 class CollectionUserFirebaseApi {
 
     private val firestore = FirebaseFirestore.getInstance()
-    val usersCollection = firestore.collection("users")
+    private val usersCollection = firestore.collection("users")
 
     /**
      * Adds or updates a user in Firestore.
@@ -79,6 +79,42 @@ class CollectionUserFirebaseApi {
                 "Erreur lors de la récupération de l'utilisateur par email: ${e.message}"
             )
             Result.failure(e)
+        }
+    }
+
+    /**
+     * Retrieves the name of the user associated with the provided email address.
+     *
+     * This method uses the [getUserByEmail] method to search for a user and returns the user's name
+     * if found. If the user is not found or an error occurs, it returns null.
+     *
+     * @param email The email address of the user whose name is to be retrieved.
+     * @return The name of the user if found, or null if not found or an error occurs.
+     */
+    suspend fun getNameUserByMail(email: String): String? {
+        return try {
+            val result =
+                getUserByEmail(email) // Call the method that returns a Result<QuerySnapshot>
+
+            // If the query found users
+            if (result.isSuccess) {
+                val documents = result.getOrNull()?.documents
+                if (!documents.isNullOrEmpty()) {
+
+                    documents[0].getString("name")
+                } else {
+                    null
+                }
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.e(
+                "Firestore",
+                "Erreur lors de la récupération du nom de l'utilisateur par email",
+                e
+            )
+            null
         }
     }
 }

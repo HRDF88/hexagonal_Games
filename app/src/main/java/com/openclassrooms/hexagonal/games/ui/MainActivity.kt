@@ -19,6 +19,7 @@ import androidx.navigation.navArgument
 import com.openclassrooms.hexagonal.games.data.service.firebase.MyFirebaseMessagingService
 import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.screen.ad.AddScreen
+import com.openclassrooms.hexagonal.games.screen.adScreen.AddCommentScreen
 import com.openclassrooms.hexagonal.games.screen.detail.DetailPostScreen
 import com.openclassrooms.hexagonal.games.screen.homefeed.HomefeedScreen
 import com.openclassrooms.hexagonal.games.screen.login.FindPasswordScreen
@@ -170,6 +171,15 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
             DetailPostScreen(navController = navHostController, postId = postId, onFABClick = {})
         }
 
+        composable(
+            "${Screen.AddComment.route}/{postId}",
+            arguments = listOf(navArgument("postId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val postId = backStackEntry.arguments?.getString("postId")
+            AddCommentScreen(navController = navHostController, postId = postId)
 
+
+
+        }
     }
 }

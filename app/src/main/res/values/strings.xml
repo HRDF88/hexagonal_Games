@@ -74,5 +74,12 @@
   //Detail screen
   <string name="loading">Loading...</string>
 
+  //Add Comment Screen
+  <string name="tittle_add_comment">Add a comment</string>
+  <string name="comment">Comment</string>
+  <string name="error_empty_comment">Comment not valid</string>
+  <string name="add_comment_success">Comment added</string>
+  <string name="error_user_not_found">User not found</string>
+
 
 </resources>

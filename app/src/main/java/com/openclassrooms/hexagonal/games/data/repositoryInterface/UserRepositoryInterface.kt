@@ -40,4 +40,15 @@ interface UserRepositoryInterface {
      * @return A [Result] containing a [QuerySnapshot] if successful, or an error otherwise.
      */
     suspend fun getUserByEmail(email: String): Result<QuerySnapshot>
+
+    /**
+     * Retrieves the name of a user by their email address.
+     *
+     * This function fetches the user’s name based on their email. It returns the name as a [String],
+     * or null if the user is not found.
+     *
+     * @param email The email address of the user.
+     * @return The name of the user if found, or null if not found.
+     */
+    suspend fun getNameUserByMail(email: String): String?
 }

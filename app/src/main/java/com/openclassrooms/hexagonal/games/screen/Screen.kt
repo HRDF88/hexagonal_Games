@@ -25,4 +25,6 @@ sealed class Screen(
     data object UserAccount : Screen("userAccount")
 
     data object DetailPost : Screen("detailPost")
+
+    data object AddComment : Screen("addComment")
 }

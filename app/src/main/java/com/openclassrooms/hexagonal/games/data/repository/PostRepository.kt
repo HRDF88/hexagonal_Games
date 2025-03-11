@@ -14,7 +14,7 @@ import javax.inject.Singleton
  * ensuring there's only one instance throughout the application.
  */
 @Singleton
-class PostRepository @Inject constructor(private val postApi: PostApi) : PostRepositoryInterface{
+class PostRepository @Inject constructor(private val postApi: PostApi) : PostRepositoryInterface {
 
     /**
      * Retrieves a Flow object containing a list of Posts ordered by creation date
@@ -40,6 +40,15 @@ class PostRepository @Inject constructor(private val postApi: PostApi) : PostRep
         postApi.addPost(title, description, imageUri, authorId, onSuccess, onFailure)
     }
 
+    /**
+     * Retrieves a post by its unique ID.
+     *
+     * This function calls the [PostApi] to retrieve a post by its ID and returns it as a [Flow].
+     * The returned flow may emit a null value if no post is found with the provided ID.
+     *
+     * @param postId The unique identifier of the post.
+     * @return A [Flow] emitting the [Post] object associated with the given ID, or null if not found.
+     */
     override suspend fun getPostById(postId: String): Flow<Post?> {
         return postApi.getPostById(postId)
     }

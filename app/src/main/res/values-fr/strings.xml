@@ -74,6 +74,13 @@
     //Detail screen
     <string name="loading">Chargement...</string>
 
+    //Add Comment Screen
+    <string name="tittle_add_comment">Ajout d\'un commentaire</string>
+    <string name="comment">Commentaire</string>
+    <string name="error_empty_comment">Commentaire non valide</string>
+    <string name="add_comment_success">Commentaire ajouté</string>
+    <string name="error_user_not_found">Utilisateur inconnu</string>
+
 
 
 </resources>

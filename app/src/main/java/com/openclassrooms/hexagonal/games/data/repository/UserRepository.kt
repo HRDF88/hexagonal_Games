@@ -70,4 +70,17 @@ class UserRepository @Inject constructor(private val api: CollectionUserFirebase
     override suspend fun getUserByEmail(email: String): Result<QuerySnapshot> {
         return api.getUserByEmail(email)
     }
+
+    /**
+     * Retrieves the name of a user based on their email.
+     *
+     * This method queries the repository or API to fetch the user's name by their email address.
+     * If the user is found, the name is returned; otherwise, `null` is returned.
+     *
+     * @param email The email address of the user whose name is to be fetched.
+     * @return The name of the user if found, or `null` if no user is found with the provided email.
+     */
+    override suspend fun getNameUserByMail(email: String): String? {
+        return api.getNameUserByMail(email)
+    }
 }

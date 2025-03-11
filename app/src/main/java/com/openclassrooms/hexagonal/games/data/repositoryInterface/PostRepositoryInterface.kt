@@ -34,5 +34,14 @@ interface PostRepositoryInterface {
         onFailure: (Exception) -> Unit
     )
 
+    /**
+     * Retrieves a post by its unique ID.
+     *
+     * This function returns a [Flow] that emits the post with the specified ID. The post will
+     * be emitted when it's available, and it will emit `null` if the post is not found.
+     *
+     * @param postId The unique identifier of the post to retrieve.
+     * @return A [Flow] that emits the [Post] object with the specified ID, or `null` if not found.
+     */
     suspend fun getPostById(postId: String): Flow<Post?>
 }

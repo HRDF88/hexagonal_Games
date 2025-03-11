@@ -1,15 +1,19 @@
 package com.openclassrooms.hexagonal.games.di
 
+import com.openclassrooms.hexagonal.games.data.repository.CommentRepository
 import com.openclassrooms.hexagonal.games.data.repository.ImageRepository
 import com.openclassrooms.hexagonal.games.data.repository.PostRepository
 import com.openclassrooms.hexagonal.games.data.repository.UserRepository
+import com.openclassrooms.hexagonal.games.data.repositoryInterface.CommentRepositoryInterface
 import com.openclassrooms.hexagonal.games.data.repositoryInterface.ImageRepositoryInterface
 import com.openclassrooms.hexagonal.games.data.repositoryInterface.PostRepositoryInterface
 import com.openclassrooms.hexagonal.games.data.repositoryInterface.UserRepositoryInterface
+import com.openclassrooms.hexagonal.games.data.service.firebase.CollectionCommentFireBaseApi
 import com.openclassrooms.hexagonal.games.data.service.firebase.CollectionUserFirebaseApi
 import com.openclassrooms.hexagonal.games.data.service.firebase.CollectionPostFireBaseApi
 import com.openclassrooms.hexagonal.games.data.service.firebase.FirebaseImageApi
 import com.openclassrooms.hexagonal.games.data.service.firebase.MyFirebaseMessagingService
+import com.openclassrooms.hexagonal.games.data.service.serviceInterface.CommentApi
 import com.openclassrooms.hexagonal.games.data.service.serviceInterface.PostApi
 import com.openclassrooms.hexagonal.games.domain.UseCase.UploadImageUseCase
 import com.openclassrooms.hexagonal.games.domain.UseCase.user.CheckIfEmailExistsUseCase
@@ -43,6 +47,11 @@ class AppModule {
     return CollectionPostFireBaseApi()
   }
 
+  @Provides
+  @Singleton
+  fun provideCommentApi() : CommentApi{
+    return  CollectionCommentFireBaseApi()
+  }
   @Provides
   fun provideUserFirebaseApi(): CollectionUserFirebaseApi {
     return CollectionUserFirebaseApi()
@@ -98,5 +107,10 @@ class AppModule {
   @Provides
   fun provideUploadImageUseCase(imageRepository: ImageRepositoryInterface): UploadImageUseCase {
     return UploadImageUseCase(imageRepository)
+  }
+
+  @Provides
+  fun provideCommentRepository(commentApi: CommentApi) : CommentRepositoryInterface{
+    return CommentRepository(commentApi)
   }
 }

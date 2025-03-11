@@ -2,7 +2,6 @@ package com.openclassrooms.hexagonal.games.data.service.serviceInterface
 
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 /**
  * This interface defines the contract for interacting with Post data from a data source.
