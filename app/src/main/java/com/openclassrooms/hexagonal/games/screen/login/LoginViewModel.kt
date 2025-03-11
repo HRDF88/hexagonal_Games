@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuthException
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.data.service.firebase.FirebaseAuthService
-import com.openclassrooms.hexagonal.games.domain.UseCase.user.CheckIfEmailExistsUseCase
-import com.openclassrooms.hexagonal.games.domain.UseCase.user.CreateUserUseCase
+import com.openclassrooms.hexagonal.games.domain.useCase.user.CheckIfEmailExistsUseCase
+import com.openclassrooms.hexagonal.games.domain.useCase.user.CreateUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

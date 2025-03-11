@@ -34,8 +34,8 @@ import com.openclassrooms.hexagonal.games.utils.image.SizeBitmapCONST
 
 @Composable
 fun PhotoPickerComposable(
-    imageBitmap: Bitmap?, // Utilisation de imageBitmap ici pour afficher l'image sélectionnée
-    onImageBitmapChanged: (Bitmap?) -> Unit // Nouveau callback pour passer l'image redimensionnée
+    imageBitmap: Bitmap?,
+    onImageBitmapChanged: (Bitmap?) -> Unit
 ) {
     val maxHeight = SizeBitmapCONST.maxHeight
     val maxWidth = SizeBitmapCONST.maxWidth
@@ -43,7 +43,7 @@ fun PhotoPickerComposable(
 
     var resizedBitmap by remember { mutableStateOf<Bitmap?>(null) }
 
-    // Lancer l'activité de sélection de photo
+
     val pickMedia = rememberLauncherForActivityResult(
         contract = PickVisualMedia(),
         onResult = { uri ->
@@ -55,7 +55,7 @@ fun PhotoPickerComposable(
                 if (originalBitmap != null) {
                     val newBitmap = BitmapUtils.resize(originalBitmap, maxWidth, maxHeight)
                     resizedBitmap = newBitmap
-                    onImageBitmapChanged(newBitmap) // Mettre à jour l'image sélectionnée via le callback
+                    onImageBitmapChanged(newBitmap)
                 }
             } else {
                 Log.d("PhotoPicker", "No media selected")
@@ -70,7 +70,7 @@ fun PhotoPickerComposable(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Si l'image est redimensionnée ou fournie, l'afficher
+
         if (imageBitmap != null) {
             Image(
                 bitmap = imageBitmap.asImageBitmap(),
@@ -78,20 +78,20 @@ fun PhotoPickerComposable(
                 modifier = Modifier.size(200.dp)
             )
         } else if (resizedBitmap != null) {
-            // Sinon, afficher l'image redimensionnée
+
             Image(
                 bitmap = resizedBitmap!!.asImageBitmap(),
                 contentDescription = "Resized Image",
                 modifier = Modifier.size(200.dp)
             )
         } else {
-            // Message si aucune image n'est sélectionnée
+
             Text(stringResource(R.string.no_select_photo))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Bouton pour ouvrir le sélecteur de photo
+
         Button(onClick = {
             pickMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
         }) {

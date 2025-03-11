@@ -1,4 +1,4 @@
-package com.openclassrooms.hexagonal.games.domain.UseCase.user
+package com.openclassrooms.hexagonal.games.domain.useCase.user
 
 import android.util.Log
 import com.openclassrooms.hexagonal.games.data.repositoryInterface.UserRepositoryInterface

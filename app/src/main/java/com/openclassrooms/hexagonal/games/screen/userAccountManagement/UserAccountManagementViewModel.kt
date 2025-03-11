@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.data.service.firebase.FirebaseAuthService
-import com.openclassrooms.hexagonal.games.domain.UseCase.user.DeleteUserUseCase
+import com.openclassrooms.hexagonal.games.domain.useCase.user.DeleteUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

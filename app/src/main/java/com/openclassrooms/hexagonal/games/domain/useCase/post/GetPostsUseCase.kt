@@ -1,4 +1,4 @@
-package com.openclassrooms.hexagonal.games.domain.UseCase
+package com.openclassrooms.hexagonal.games.domain.useCase
 
 import com.openclassrooms.hexagonal.games.data.repositoryInterface.PostRepositoryInterface
 import com.openclassrooms.hexagonal.games.domain.model.Post

@@ -1,4 +1,4 @@
-package com.openclassrooms.hexagonal.games.domain.UseCase
+package com.openclassrooms.hexagonal.games.domain.useCase
 
 import android.net.Uri
 import com.google.android.gms.tasks.Task

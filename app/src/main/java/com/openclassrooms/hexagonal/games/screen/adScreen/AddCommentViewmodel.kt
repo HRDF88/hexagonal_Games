@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.data.service.firebase.FirebaseAuthService
-import com.openclassrooms.hexagonal.games.domain.UseCase.comment.AddCommentToPostUseCase
-import com.openclassrooms.hexagonal.games.domain.UseCase.user.GetNameUserByMailUseCase
+import com.openclassrooms.hexagonal.games.domain.useCase.comment.AddCommentToPostUseCase
+import com.openclassrooms.hexagonal.games.domain.useCase.user.GetNameUserByMailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

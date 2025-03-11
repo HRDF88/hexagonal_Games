@@ -1,4 +1,4 @@
-package com.openclassrooms.hexagonal.games.domain.UseCase.comment
+package com.openclassrooms.hexagonal.games.domain.useCase.comment
 
 import com.openclassrooms.hexagonal.games.data.repositoryInterface.CommentRepositoryInterface
 import javax.inject.Inject

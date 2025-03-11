@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.hexagonal.games.R
-import com.openclassrooms.hexagonal.games.domain.UseCase.comment.GetCommentsForPostUseCase
-import com.openclassrooms.hexagonal.games.domain.UseCase.post.GetPostByIdUseCase
+import com.openclassrooms.hexagonal.games.domain.useCase.comment.GetCommentsForPostUseCase
+import com.openclassrooms.hexagonal.games.domain.useCase.post.GetPostByIdUseCase
 import com.openclassrooms.hexagonal.games.domain.model.Comment
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.utils.image.Base64Converter

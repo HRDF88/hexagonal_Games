@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.hexagonal.games.data.service.firebase.FirebaseAuthService
-import com.openclassrooms.hexagonal.games.domain.UseCase.AddPostUseCase
+import com.openclassrooms.hexagonal.games.domain.useCase.AddPostUseCase
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
 import com.openclassrooms.hexagonal.games.utils.image.Base64Converter

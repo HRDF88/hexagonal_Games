@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.openclassrooms.hexagonal.games.domain.UseCase.GetPostsUseCase
+import com.openclassrooms.hexagonal.games.domain.useCase.GetPostsUseCase
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.utils.image.Base64Converter
 import com.openclassrooms.hexagonal.games.utils.image.BitmapConverter

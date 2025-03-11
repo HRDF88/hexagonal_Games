@@ -15,11 +15,11 @@ import com.openclassrooms.hexagonal.games.data.service.firebase.FirebaseImageApi
 import com.openclassrooms.hexagonal.games.data.service.firebase.MyFirebaseMessagingService
 import com.openclassrooms.hexagonal.games.data.service.serviceInterface.CommentApi
 import com.openclassrooms.hexagonal.games.data.service.serviceInterface.PostApi
-import com.openclassrooms.hexagonal.games.domain.UseCase.UploadImageUseCase
-import com.openclassrooms.hexagonal.games.domain.UseCase.user.CheckIfEmailExistsUseCase
-import com.openclassrooms.hexagonal.games.domain.UseCase.user.CreateUserUseCase
-import com.openclassrooms.hexagonal.games.domain.UseCase.user.DeleteUserUseCase
-import com.openclassrooms.hexagonal.games.domain.UseCase.user.GetUserUseCase
+import com.openclassrooms.hexagonal.games.domain.useCase.UploadImageUseCase
+import com.openclassrooms.hexagonal.games.domain.useCase.user.CheckIfEmailExistsUseCase
+import com.openclassrooms.hexagonal.games.domain.useCase.user.CreateUserUseCase
+import com.openclassrooms.hexagonal.games.domain.useCase.user.DeleteUserUseCase
+import com.openclassrooms.hexagonal.games.domain.useCase.user.GetUserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
